@@ -1,0 +1,1306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intro to GitHub for Business Analytics · BAN 501</title>
+<meta name="description" content="Intro to GitHub for business analytics students (BAN 501): put a Python data project on GitHub from VS Code, keep it up to date, and run other people's projects, with GitHub Copilot, on Windows or Mac.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* One reading column beside a sticky contents rail. Windows/Mac content is marked .win / .mac. */
+:root{
+  --bg:#F7F6F2; --surface:#FDFDFB; --soft:#EEF1EF; --ink:#17262B; --muted:#4B5B60; --line:#D5DAD7;
+  --p0:#4B5B60; --p0-t:#E8ECEA;
+  --p1:#2E6B4F; --p1-t:#E1EEE7;
+  --p2:#4A4FA3; --p2-t:#E5E6F6;
+  --p3:#1E6A74; --p3-t:#DEEDEF;
+  --p4:#8A4500; --p4-t:#F7E8DA;
+  --on-accent:#FFFFFF;
+  --click:#B85C00; --click-t:#FBE7D3;
+  --vs:#0078D4; --vs-ink:#FFFFFF;
+  --term:#17262B; --term-ink:#EEF2F0; --term-hi:#F2A65A; --term-dim:#9DB0AE;
+  --good:#2E6B4F; --good-t:#E1EEE7; --bad:#A33A1E; --bad-t:#F8E4DC;
+  --cp:#8A3B7A; --cp-t:#F5E7F1;
+  --font:'DM Sans','Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'Cascadia Mono',Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#11191C; --surface:#172126; --soft:#1D292E; --ink:#E6ECEA; --muted:#A3B2B0; --line:#2E3D42;
+  --p0:#AEBDBB; --p0-t:#1F2B2F; --p1:#7CC49F; --p1-t:#16302A; --p2:#A9ADF2; --p2-t:#23253F;
+  --p3:#6CC3CC; --p3-t:#13303A; --p4:#F0A866; --p4-t:#3A2614; --on-accent:#0E1417;
+  --click:#F2A65A; --click-t:#3A2614; --vs:#0E639C; --vs-ink:#FFFFFF;
+  --term:#0A1113; --term-ink:#E6ECEA; --term-hi:#F2A65A; --term-dim:#8FA3A1;
+  --good:#7CC49F; --good-t:#16302A; --bad:#F09A7C; --bad-t:#3A1E16; --cp:#E8A2D8; --cp-t:#34192F;
+  color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#11191C; --surface:#172126; --soft:#1D292E; --ink:#E6ECEA; --muted:#A3B2B0; --line:#2E3D42;
+  --p0:#AEBDBB; --p0-t:#1F2B2F; --p1:#7CC49F; --p1-t:#16302A; --p2:#A9ADF2; --p2-t:#23253F;
+  --p3:#6CC3CC; --p3-t:#13303A; --p4:#F0A866; --p4-t:#3A2614; --on-accent:#0E1417;
+  --click:#F2A65A; --click-t:#3A2614; --vs:#0E639C; --vs-ink:#FFFFFF;
+  --term:#0A1113; --term-ink:#E6ECEA; --term-hi:#F2A65A; --term-dim:#8FA3A1;
+  --good:#7CC49F; --good-t:#16302A; --bad:#F09A7C; --bad-t:#3A1E16; --cp:#E8A2D8; --cp-t:#34192F;
+  color-scheme:dark }
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important} }
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--font);
+  padding-left:max(clamp(16px,2.5vw,40px),env(safe-area-inset-left,0px));padding-right:max(clamp(16px,2.5vw,40px),env(safe-area-inset-right,0px))}
+img{max-width:100%}
+a{color:var(--p2);text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--click);outline-offset:2px;border-radius:4px}
+code,kbd,pre{font-family:var(--mono)}
+p,ul,ol{margin:0}
+h1,h2,h3{text-wrap:balance}
+.skip{position:absolute;left:-9999px;top:8px;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;z-index:9}
+.skip:focus{left:16px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.page{max-width:1600px;margin:0 auto}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:56px;align-items:start;padding-block:8px 96px}
+main{min-width:0}
+
+/* parts: each part has its own accent color */
+[data-part="0"],[data-part="2"],[data-part="w"]{--pc:var(--p0);--pct:var(--p0-t)}
+[data-part="1"],[data-part="6"]{--pc:var(--p1);--pct:var(--p1-t)}
+[data-part="3"]{--pc:var(--p2);--pct:var(--p2-t)}
+[data-part="4"]{--pc:var(--p3);--pct:var(--p3-t)}
+[data-part="5"]{--pc:var(--p4);--pct:var(--p4-t)}
+.part{padding-block:64px 4px;scroll-margin-top:16px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--pc,var(--muted));margin:0}
+.part h2{font-size:clamp(28px,4vw,38px);line-height:1.15;letter-spacing:-.5px;margin:8px 0 10px}
+.part > p{color:var(--muted);max-width:84ch}
+.unit{padding-block:40px;border-top:1px solid var(--line);scroll-margin-top:12px;display:flex;flex-direction:column;gap:18px}
+.part + .unit{border-top:0;padding-top:28px}
+#how{border-top:0;padding-top:24px}
+.unit-head{display:flex;align-items:flex-start;gap:14px}
+.no{font:600 14px/1 var(--mono);color:var(--pc);background:var(--pct);border-radius:6px;padding:7px 8px;margin-top:5px;min-width:36px;text-align:center;font-variant-numeric:tabular-nums}
+.unit h3{font-size:clamp(22px,3vw,28px);line-height:1.22;letter-spacing:-.3px;margin:0;flex:1;min-width:0}
+.done{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;
+  border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 9px;background:var(--surface);white-space:nowrap;margin-top:2px}
+.done input{width:18px;height:18px;accent-color:var(--good);margin:0}
+.done:has(input:checked){color:var(--good);border-color:var(--good);background:var(--good-t)}
+.unit > p,.unit li{max-width:92ch}
+.unit ul:not([class]),.box ul:not([class]){padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.sub{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--pc);margin:6px 0 -6px}
+.why b:first-child{color:var(--pc)}
+ol.do{list-style:none;padding:0;counter-reset:step;display:flex;flex-direction:column;gap:16px}
+ol.do > li{counter-increment:step;display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;align-items:start}
+ol.do > li::before{content:counter(step);width:30px;height:30px;border-radius:50%;background:var(--pc);color:var(--on-accent);
+  font-weight:700;font-size:15px;display:grid;place-items:center;margin-top:1px}
+ol.do > li > *{grid-column:2}
+ol.do > li > * + *{margin-top:12px}
+ol.do.abc > li::before{content:counter(step,lower-alpha)}
+.lede{font-size:19px;color:var(--muted);max-width:76ch}
+.small{font-size:14px;color:var(--muted)}
+.credit{font-size:13px;color:var(--muted)}
+
+/* UI vocabulary */
+kbd{font:500 .84em var(--mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--surface);white-space:nowrap}
+code{font-size:.9em;background:var(--soft);border-radius:4px;padding:1px 5px;white-space:nowrap}
+code.wrap{white-space:normal;overflow-wrap:anywhere}
+.btn{font-weight:600;white-space:nowrap;background:var(--vs);color:var(--vs-ink);border-radius:3px;padding:1px 9px;font-size:.92em}
+body.os-win .mac,body.os-mac .win{display:none!important}
+
+/* figures */
+figure{margin:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+figure img{display:block;max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#FFFFFF}
+figcaption{font-size:14px;color:var(--muted);max-width:92ch}
+.figs{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.figs > figure{flex:1 1 240px}
+
+/* boxes */
+.box{border-radius:10px;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.box > p{max-width:92ch}
+.box > .lbl{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:0}
+.check{background:var(--good-t)} .check > .lbl{color:var(--good)}
+.warn{background:var(--bad-t)} .warn > .lbl{color:var(--bad)}
+.tip{background:var(--soft)} .tip > .lbl{color:var(--muted)}
+.copilot{background:var(--cp-t);border:1px solid color-mix(in srgb,var(--cp) 30%,transparent)}
+.copilot > .lbl{color:var(--cp);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.copilot > .lbl .where{font-weight:600;letter-spacing:0;text-transform:none;font-size:13px;color:var(--muted)}
+.spark{display:inline-block;width:14px;height:14px;vertical-align:-2px;background:currentColor;
+  clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
+.prompt{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 84px 10px 14px;font-size:16px;margin:0;overflow-wrap:anywhere}
+.cw{position:relative;max-width:100%;min-width:0}
+.copy{position:absolute;top:8px;right:8px;font:600 12px var(--font);color:var(--muted);background:var(--surface);
+  border:1px solid var(--line);border-radius:6px;padding:4px 10px;cursor:pointer}
+.copy:hover{border-color:var(--muted);color:var(--ink)}
+.dl{display:inline-flex;align-items:center;gap:10px;background:var(--p1);color:var(--on-accent);font-weight:700;font-size:16px;
+  text-decoration:none;border-radius:10px;padding:10px 18px;white-space:nowrap}
+.dl:hover{filter:brightness(1.1)}
+.dl svg{width:18px;height:18px;flex:none}
+.hero-dl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:24px}
+.dl-card{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;background:var(--p1-t);border-radius:12px;padding:16px 18px}
+.dl-card p{max-width:60ch}
+.fill{background:var(--click-t);color:inherit;border-radius:3px;padding:0;box-shadow:inset 0 -2px 0 var(--click)}
+.fields{display:flex;flex-wrap:wrap;gap:12px 18px}
+.fields label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600;color:var(--muted);flex:1 1 220px}
+.fields input{font:400 16px var(--font);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+
+/* tables and cards */
+.tbl{overflow-x:auto;max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:15.5px}
+th{text-align:left;font-size:13px;letter-spacing:.5px;color:var(--muted);font-weight:700;border-bottom:2px solid var(--line);padding:8px 12px}
+td{border-bottom:1px solid var(--line);padding:10px 12px;vertical-align:top}
+table:not(.plain) td:first-child{font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card h4{margin:0;font-size:18px}
+.card .job{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--pc)}
+.card.accent{background:var(--pct);border-color:transparent}
+.tree{font:14.5px/1.75 var(--mono);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;overflow-x:auto;white-space:pre;margin:0}
+.loop{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;list-style:none;padding:0}
+.loop > li{flex:1 1 120px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;max-width:none}
+.loop b{font-size:17px} .loop span{font-size:14px;color:var(--muted)}
+.loop .k{font:600 13px var(--mono);color:var(--pc)}
+.vs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.vs .tree{border:0;padding:0;background:transparent;font-size:14px;line-height:1.8}
+.versions{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
+.versions li{display:flex;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.versions span{color:var(--muted);font-size:14px}
+.notes{padding-left:20px;display:flex;flex-direction:column;gap:8px}
+.qp{max-width:640px;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px rgba(23,38,43,.12);padding:6px;font-size:15px;display:flex;flex-direction:column;gap:2px}
+.qp-in{border:1px solid var(--vs);border-radius:4px;padding:6px 10px;margin-bottom:4px}
+.qp-row{display:flex;justify-content:space-between;gap:2px 16px;flex-wrap:wrap;padding:6px 10px;border-radius:4px}
+.qp-row.sel{background:var(--vs);color:var(--vs-ink)}
+.qp-r{opacity:.85;font-size:14px}
+.rbar{max-width:640px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;background:var(--vs);color:var(--vs-ink);border-radius:6px;padding:8px 12px;font-size:14.5px;line-height:1.4}
+.rb-ic{width:16px;height:16px;flex:none}
+.rb-msg{flex:1 1 260px;min-width:0}
+.rb-act{font-weight:600;text-decoration:underline;text-underline-offset:2px;padding:1px 4px;border-radius:3px}
+.rb-act.on{outline:2px solid var(--term-hi);outline-offset:1px}
+.sizes{display:flex;flex-direction:column;gap:12px}
+.sz-track{position:relative;height:14px;border-radius:999px;background:linear-gradient(90deg,var(--good-t),var(--click-t) 50%,var(--bad-t));margin:18px 12px 4px 0}
+.sz-track i{position:absolute;top:-8px;width:3px;height:30px;background:var(--ink);border-radius:2px;transform:translateX(-50%)}
+.sizes ul{padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.sources h4{margin:0 0 6px;font-size:16px}
+.sources ul{padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.donelist{list-style:none;padding:0;display:flex;flex-direction:column;gap:6px}
+.donelist li::before{content:"☐ ";color:var(--good);font-weight:700}
+
+/* diagrams */
+.diagram{overflow-x:auto;max-width:100%}
+.diagram svg{display:block;width:100%;height:auto;min-width:560px}
+.diagram.small svg{min-width:0;max-width:360px}
+svg text{font-family:var(--font)}
+.d-box{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.d-soft{fill:var(--soft)}
+.d-t{fill:var(--ink);font-size:17px;font-weight:700}
+.d-s{fill:var(--muted);font-size:13.5px}
+.d-m{fill:var(--ink);font-family:var(--mono);font-size:13px}
+.d-on{fill:var(--on-accent)}
+.d-a1{fill:var(--p1)} .d-a2{fill:var(--p2)}
+.d-l{fill:none;stroke-width:3;stroke-linecap:round}
+.d-ink{stroke:var(--ink)} .d-click{stroke:var(--click)} .d-green{stroke:var(--p1)}
+.m-ink{fill:var(--ink)} .m-click{fill:var(--click)} .m-green{fill:var(--p1)}
+.d-lab{font-size:15px;font-weight:700}
+.d-lab.click{fill:var(--click)} .d-lab.green{fill:var(--p1)} .d-lab.ink{fill:var(--ink)}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:48px;align-items:center;padding-block:56px 40px;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(40px,7vw,68px);line-height:1.02;letter-spacing:-2px;margin:10px 0 14px}
+.hero .lede{font-size:clamp(18px,2.2vw,21px)}
+.hero .diagram.small svg{max-width:400px}
+.hero .goals{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+.hero .goals p{font-weight:700}
+.hero .goals ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
+.hero .goals li{display:flex;gap:12px;align-items:baseline}
+.hero .goals li::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;background:var(--p1);transform:translateY(-1px)}
+.meta{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:22px;font-size:14px;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;margin-top:26px}
+.os-pick{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.os-q{font-size:14px;font-weight:700}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.seg button{font:600 14px var(--font);padding:5px 16px;border-radius:999px;cursor:pointer;color:var(--muted);background:transparent;border:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.progress{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.bar{width:140px;height:8px;border-radius:999px;background:var(--soft);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--good);border-radius:999px;transition:width .3s}
+
+/* contents */
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);max-height:calc(100vh - 40px);overflow:auto;padding-top:56px;font-size:14px}
+.toc .rail-os{display:flex;flex-direction:column;gap:6px;margin-bottom:6px}
+.toc .rail-os .os-q{font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.toc .seg button{font-size:13px;padding:4px 12px}
+.toc .rail-os .seg{align-self:flex-start}
+.toc .tp{font-size:11.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--pc);margin:18px 0 6px}
+.toc ol{list-style:none;padding:0;display:flex;flex-direction:column;gap:2px}
+.toc a{display:grid;grid-template-columns:26px minmax(0,1fr) 14px;gap:6px;padding:3px 6px;border-radius:6px;color:var(--ink);text-decoration:none;line-height:1.35}
+.toc a:hover{background:var(--soft)}
+.toc a.here{background:var(--pct)}
+.toc .tn{font:500 12px/1.6 var(--mono);color:var(--muted)}
+.toc .tick{color:var(--good);font-weight:700}
+.toc .reset{margin-top:20px;font:600 12px var(--font);color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:4px 10px;cursor:pointer}
+.toc-mobile{display:none;margin-top:24px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.toc-mobile summary{cursor:pointer;font-weight:700;padding:12px 16px}
+.toc-mobile .toc{position:static;display:block;max-height:none;padding:0 12px 12px}
+@media (max-width:1000px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .layout > .toc{display:none}
+  .toc-mobile{display:block}
+}
+@media (max-width:760px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:28px;padding-top:36px}
+  .hero .diagram.small svg{max-width:300px}
+  .unit-head{flex-wrap:wrap}
+  .unit h3{flex-basis:calc(100% - 60px)}
+  .done{margin-left:50px}
+}
+footer{border-top:1px solid var(--line);padding-block:28px 48px;font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+@media print{
+  .toc,.toc-mobile,.controls,.copy,.done{display:none!important}
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .unit{break-inside:auto}
+}
+</style>
+</head>
+<body class="os-win" data-example-repo="https://github.com/dr-wenbo/bike-rentals">
+<a class="skip" href="#main">Skip to the steps</a>
+
+<svg class="defs" aria-hidden="true" focusable="false"><defs>
+  <marker id="ar-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="m-ink"/></marker>
+  <marker id="ar-click" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="m-click"/></marker>
+  <marker id="ar-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="m-green"/></marker>
+  <symbol id="i-dl" viewBox="0 0 20 20"><path d="M10 2.5v10m0 0-4-4m4 4 4-4M3.5 13.5v2.5a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5v-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+
+<div class="page">
+
+<header class="hero" id="top" data-part="0">
+  <div>
+    <p class="eyebrow">BAN 501 · Python for Business Analytics</p>
+    <h1>Intro to GitHub for Business Analytics</h1>
+    <p class="lede">You have a project folder on your laptop. How do you put it on GitHub, keep it up to date, and run other people's projects? This guide shows you step by step in VS Code, with GitHub Copilot doing the typing. You'll practice on <b>Pinecone Coffee</b>: 12 weeks of made-up sales from a coffee shop, and one question: <i>which drink brings in the most money?</i></p>
+    <div class="goals">
+      <p>When you finish, you can:</p>
+      <ul>
+        <li><span><b>Put a project folder on GitHub</b> (publish), and keep private files, like passwords and customer data, off it.</span></li>
+        <li><span><b>Save versions</b> of your work (commit), and <b>upload</b> them (push, sync).</span></li>
+        <li><span><b>Bring changes down</b> from GitHub (pull).</span></li>
+        <li><span><b>Look back</b> at old versions, and <b>undo</b> mistakes.</span></li>
+        <li><span><b>Run someone else's project</b> from GitHub (clone).</span></li>
+      </ul>
+    </div>
+    <div class="hero-dl">
+      <a class="dl" href="downloads/pinecone-sales.zip" download><svg aria-hidden="true"><use href="#i-dl"/></svg>Download the project folder</a>
+      <span class="small">pinecone-sales.zip, 5 KB. You unzip it in step 1.</span>
+    </div>
+    <div class="meta"><span>About 90 minutes</span><span>VS Code with the Python and Jupyter extensions</span><span>GitHub Copilot</span></div>
+    <div class="controls">
+      <div class="os-pick"><span class="os-q">My computer:</span>
+        <div class="seg" role="group" aria-label="My computer">
+          <button type="button" data-os="win" aria-pressed="true">Windows</button>
+          <button type="button" data-os="mac" aria-pressed="false">Mac</button>
+        </div>
+      </div>
+      <div class="progress" aria-live="polite"><div class="bar"><i id="bar"></i></div><span id="progress-text"></span></div>
+    </div>
+  </div>
+  <div class="diagram small">
+    <svg viewBox="0 0 360 300" role="img" aria-label="Your laptop and GitHub: push sends your work up, pull brings work down">
+      <rect x="40" y="8" width="280" height="92" rx="16" class="d-a2"/>
+      <text x="64" y="50" class="d-on" style="font-size:28px;font-weight:700">GitHub</text>
+      <text x="64" y="78" class="d-on" style="font-size:16px">the online copy</text>
+      <rect x="40" y="200" width="280" height="92" rx="16" class="d-a1"/>
+      <text x="64" y="242" class="d-on" style="font-size:28px;font-weight:700">Your laptop</text>
+      <text x="64" y="270" class="d-on" style="font-family:var(--mono);font-size:15px">pinecone-sales/</text>
+      <line x1="130" y1="194" x2="130" y2="110" class="d-l d-click" marker-end="url(#ar-click)"/>
+      <text x="74" y="158" class="d-lab click">Push</text>
+      <line x1="232" y1="106" x2="232" y2="190" class="d-l d-green" marker-end="url(#ar-green)"/>
+      <text x="246" y="158" class="d-lab green">Pull</text>
+    </svg>
+  </div>
+</header>
+
+<details class="toc-mobile"><summary>Contents</summary><nav class="toc" aria-label="Contents"></nav></details>
+
+<div class="layout">
+<nav class="toc" id="toc" aria-label="Contents"></nav>
+<main id="main">
+
+<section class="unit" id="how" data-part="0">
+  <h3>How this guide works</h3>
+  <ul class="notes">
+    <li>Keep this page open next to VS Code, and do each step in VS Code.</li>
+    <li>Choose <b>Windows</b> or <b>Mac</b> at the top of the page. The keys and the steps change to match your computer.<span class="mac"> On a Mac, <kbd>⌘</kbd> is Command, <kbd>⌃</kbd> is Control, <kbd>⌥</kbd> is Option, and <kbd>⇧</kbd> is Shift.</span></li>
+    <li>Each step says <b>why</b> you do it, <b>what to do</b>, and what <b>you should see</b>. Check that before you go on to the next step.</li>
+    <li>Tick <b>Done</b> when you finish a step. Your ticks stay in this browser, so you can stop and come back later.</li>
+  </ul>
+  <div class="box copilot">
+    <p class="lbl"><span class="spark"></span> How to ask Copilot</p>
+    <p><b>Copilot does the typing.</b> You won't type any code or commands in this guide. When a step needs a command, or a change to a file, you ask GitHub Copilot. Each time you see an <b>Ask Copilot</b> box:</p>
+    <ol class="do">
+      <li><span>Open the <b>Chat</b> view: <kbd class="win">Ctrl+Alt+I</kbd><kbd class="mac">⌃⌘I</kbd>. You can also open the <b>Chat</b> menu at the top of the VS Code window and choose <b>Open Chat</b>.</span></li>
+      <li><span>At the bottom of the chat box, open the agent picker and choose <b>Agent</b> (not Ask or Plan). In Agent mode, Copilot can change files and run commands for you. Leave the other pickers as they are. They usually read <b>Copilot</b>, <b>Auto</b> and <b>Manual permissions</b>.</span></li>
+      <li><span>Click <b>Copy</b> on the prompt in this guide, paste it into the chat box (<kbd class="win">Ctrl+V</kbd><kbd class="mac">⌘V</kbd>), and press <kbd>Enter</kbd>.</span></li>
+      <li><span><b>Read what Copilot did before you accept it.</b></span>
+        <ul>
+          <li>Copilot made or changed a file? Click <b>Keep</b>. If it's wrong, click <b>Undo</b> and ask again.</li>
+          <li>Copilot wants to run a command? It shows you the command and waits. Read it, then click <b>Allow</b> (it may say <b>Allow Once</b>), or <b>Skip</b>. Don't choose an option that allows everything from now on.</li>
+        </ul>
+      </li>
+    </ol>
+    <p class="small">Copilot's answers are a little different every time. That's fine, as long as the result passes the step's check. Each prompt uses a little of your monthly Copilot allowance, and this guide needs about 10 prompts. To see what's left, click the Copilot icon in the status bar at the bottom of VS Code.</p>
+  </div>
+</section>
+
+<!-- ============================== PART 1 ============================== -->
+<section class="part" id="part1" data-part="1">
+  <p class="eyebrow">Part 1</p>
+  <h2>Your project folder</h2>
+  <p>Every project starts as a folder on your laptop. In steps 1 to 3 you download the Pinecone Coffee project folder, open it in VS Code, and run it once. Nothing is on GitHub yet.</p>
+</section>
+
+<section class="unit" id="download" data-n="1" data-part="1" data-do>
+  <h3>Download the project folder, and unzip it</h3>
+  <p class="why"><b>Why:</b> this guide starts where most projects start: a folder with data and code on your laptop. Everything the project needs is inside that one folder: <b>one project = one folder = one repository</b>.</p>
+  <div class="dl-card">
+    <a class="dl" href="downloads/pinecone-sales.zip" download><svg aria-hidden="true"><use href="#i-dl"/></svg>Download pinecone-sales.zip</a>
+    <p class="small">5 KB. One folder with the data, a script, a notebook, a README, and two <b>fake</b> private files to practice with.</p>
+  </div>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>Click <b>Download pinecone-sales.zip</b> above. Your browser saves it in your <b>Downloads</b> folder.</span></li>
+    <li class="win"><span>Open File Explorer (<kbd>Windows+E</kbd>) and click <b>Downloads</b> in the left pane. Right-click <code>pinecone-sales.zip</code> and choose <b>Extract All…</b> (Windows may hide the <code>.zip</code> ending: look for <code>pinecone-sales</code> with a zipper on its icon.)</span></li>
+    <li class="win"><span>In the window that opens, click <b>Browse…</b> Click <b>Documents</b> in the left pane, and double-click your <code>BAN501</code> folder. (No <code>BAN501</code> folder yet? Click <b>New folder</b>, type <code>BAN501</code>, press <kbd>Enter</kbd>, and double-click it.) Click <b>Select Folder</b>, then <b>Extract</b>.</span></li>
+    <li class="mac"><span>Open Finder and click <b>Downloads</b> in the sidebar. If you see <code>pinecone-sales.zip</code>, double-click it: a <code>pinecone-sales</code> folder appears next to it. (If you only see the folder, Safari has unzipped it for you.)</span></li>
+    <li class="mac"><span>Click the <code>pinecone-sales</code> folder once, and press <kbd>⌘C</kbd> to copy it. Click <b>Documents</b> in the sidebar, and double-click your <code>BAN501</code> folder. (No <code>BAN501</code> folder yet? Click <b>File ▸ New Folder</b>, type <code>BAN501</code>, press <kbd>Return</kbd>, and double-click it.) Press <kbd>⌘V</kbd> to paste.</span></li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p>
+    <p class="win">A <code>pinecone-sales</code> folder inside <code>Documents\BAN501</code>. Inside it: a <code>data</code> folder, <code>.env</code>, <code>analysis.py</code>, <code>README.md</code>, <code>report.ipynb</code> and <code>requirements.txt</code>. (Windows may hide endings like <code>.py</code>.)</p>
+    <p class="mac">A <code>pinecone-sales</code> folder inside <code>Documents/BAN501</code>. Inside it: a <code>data</code> folder, <code>analysis.py</code>, <code>README.md</code>, <code>report.ipynb</code> and <code>requirements.txt</code>. Finder hides <code>.env</code>, because its name starts with a dot. VS Code shows it in step 2.</p>
+  </div>
+  <div class="box tip win"><p class="lbl">If something goes wrong</p>
+    <ul>
+      <li>No <code>pinecone-sales</code> folder in <code>BAN501</code>? It went to <b>Downloads</b>. Right-click <code>pinecone-sales.zip</code> again, choose <b>Extract All…</b>, and this time click <b>Browse…</b> and pick <code>BAN501</code>.</li>
+      <li>A <code>pinecone-sales</code> folder inside another <code>pinecone-sales</code> folder? Use the inner one: it's the one with <code>README.md</code> directly inside it.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="unit" id="open-folder" data-n="2" data-part="1" data-do>
+  <h3>Open the folder in VS Code, and trust it</h3>
+  <p class="why"><b>Why:</b> VS Code, Git and Copilot all work in the folder you have open. Open the project folder itself, not the folder above it.</p>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>In VS Code, click <b>File ▸ Open Folder…</b></span>
+      <figure><img src="figures/f_file_menu.png" width="342" height="208" alt="VS Code File menu with Open Folder highlighted" loading="lazy"></figure>
+    </li>
+    <li><span>Click <b>Documents</b> in the <span class="win">left pane</span><span class="mac">sidebar on the left</span> of the window, and double-click <code>BAN501</code>. Then click <code>pinecone-sales</code> <b>once</b>, to select it.</span></li>
+    <li><span>Click <span class="win"><b>Select Folder</b>.</span><span class="mac"><b>Open</b>. If macOS asks, now or later, whether Visual Studio Code can access files in your Documents folder, click <b>Allow</b>.</span></span></li>
+    <li><span><b>Trust the folder.</b> It's a project from your instructor, so tell VS Code that you trust it:</span>
+      <ul>
+        <li>If a <b>Restricted Mode</b> bar appears at the top of VS Code, click <b>Manage</b> in that bar. In the tab that opens, click <b>Trust</b>.</li>
+        <li>If instead a window asks <i>Do you trust the authors of the files in this folder?</i>, click <b>Yes, I trust the authors</b>.</li>
+        <li>No bar and no window? Look at the left end of the status bar, along the bottom of VS Code. If it says <b>Restricted Mode</b>, click it, then click <b>Trust</b>. If it doesn't, the folder is already trusted.</li>
+      </ul>
+      <figure>
+        <div class="rbar" role="img" aria-label="The Restricted Mode bar at the top of VS Code: Restricted Mode is intended for safe code browsing. Trust this folder to enable all features. Then two links, Manage (outlined) and Learn More.">
+          <svg class="rb-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.2 2.6 3.1v4.1c0 3.3 2.3 6.2 5.4 7.6 3.1-1.4 5.4-4.3 5.4-7.6V3.1z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <span class="rb-msg">Restricted Mode is intended for safe code browsing. Trust this folder to enable all features.</span>
+          <span class="rb-act on">Manage</span><span class="rb-act">Learn More</span>
+        </div>
+        <figcaption>The Restricted Mode bar (its color depends on your VS Code theme). Click Manage.</figcaption>
+      </figure>
+    </li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p><b>PINECONE-SALES</b> at the top of the Explorer (<kbd class="win">Ctrl+Shift+E</kbd><kbd class="mac">⇧⌘E</kbd>). Below it: the <code>data</code> folder, <code>.env</code>, <code>analysis.py</code>, <code>README.md</code>, <code>report.ipynb</code> and <code>requirements.txt</code>. No Restricted Mode bar.</p></div>
+  <div class="box tip"><p class="lbl">Why trust matters</p><p>In Restricted Mode, VS Code turns off Copilot's Agent mode and the terminal, so the next steps wouldn't work. Trust only folders you made yourself, or that come from people you know, like your instructor.</p></div>
+</section>
+
+<section class="unit" id="look-around" data-n="3" data-part="1" data-do>
+  <h3>Look around, and run it</h3>
+  <p class="why"><b>Why:</b> before you put a project on GitHub, know what's in it. Most files are fine to share. Some must never leave your laptop.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>File</th><th>What it is</th><th>Goes on GitHub?</th></tr></thead>
+    <tbody>
+      <tr><td><code>data/sales.csv</code></td><td>12 weeks of sales: one row per drink per day</td><td>Yes</td></tr>
+      <tr><td><code>analysis.py</code></td><td>A script that prints cups and revenue by drink, and the top drink</td><td>Yes</td></tr>
+      <tr><td><code>report.ipynb</code></td><td>A notebook: the same analysis, with a bar chart</td><td>Yes</td></tr>
+      <tr><td><code>README.md</code></td><td>What the project is, and how to run it</td><td>Yes</td></tr>
+      <tr><td><code>requirements.txt</code></td><td>The packages the project needs: pandas and matplotlib</td><td>Yes</td></tr>
+      <tr><td><code>.env</code></td><td>A <b>fake</b> secret key. Real projects keep passwords and keys in a file like this</td><td><b>Never</b></td></tr>
+      <tr><td><code>data/customers_private.csv</code></td><td><b>Fake</b> customer names, emails and phone numbers</td><td><b>Never</b></td></tr>
+    </tbody>
+  </table></div>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span><b>Read the README.</b> <span class="win">Right-click</span><span class="mac">Control-click (or two-finger click)</span> <code>README.md</code> in the Explorer, and choose <b>Open Preview</b>.</span>
+      <figure><img src="figures/f_readme.png" width="935" height="528" alt="README.md shown as a formatted preview: the title Pinecone Coffee - 12-week sales report, a table of files, and How to run it steps" loading="lazy"></figure>
+    </li>
+    <li><span><b>Run the script.</b> Open <code>analysis.py</code> and click <b>▷</b> (<b>Run Python File</b>) at the top right of the editor. The output appears in the terminal at the bottom of VS Code.</span>
+      <figure><img src="figures/f_run_start.png" width="550" height="216" alt="Terminal: analysis.py prints cups and revenue by drink, and Top drink by revenue: Latte" loading="lazy"></figure>
+    </li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>A table of cups and revenue for each drink, and <i>Top drink by revenue: Latte</i>.</p></div>
+  <div class="box tip"><p class="lbl">If something goes wrong</p>
+    <ul>
+      <li>VS Code asks you to select a Python interpreter? Pick the Python you use in class.</li>
+      <li><code class="wrap">ModuleNotFoundError: No module named 'pandas'</code> means pandas isn't installed for this Python. Ask Copilot: <i>Install pandas for the Python that VS Code uses</i>, click <b>Allow</b>, and run the file again.</li>
+      <li><code class="wrap">FileNotFoundError: ... 'data/sales.csv'</code>? You opened the folder <b>above</b> the project, so Python looked for the data in the wrong place. Open the <code>pinecone-sales</code> folder itself (step 2).</li>
+    </ul>
+    <figure><img src="figures/f_fnf2.png" width="705" height="119" alt="Terminal: running analysis.py from the folder above the project ends with FileNotFoundError: No such file or directory: data/sales.csv, outlined" loading="lazy"><figcaption>Read the last line of an error first.</figcaption></figure>
+  </div>
+</section>
+
+<!-- ============================== PART 2 ============================== -->
+<section class="part" id="part2" data-part="2">
+  <p class="eyebrow">Part 2</p>
+  <h2>Get ready, once per computer</h2>
+  <p>Steps 4 and 5 take 10 to 20 minutes. You do them once on each computer. On a computer you've set up before, check them quickly and go on.</p>
+</section>
+
+<section class="unit" id="account" data-n="4" data-part="2" data-do>
+  <h3>A GitHub account, and Copilot</h3>
+  <p class="why"><b>Why:</b> GitHub is where your projects live online, and Copilot uses the same account.</p>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>No GitHub account yet? Make one at <a href="https://github.com/signup">github.com/signup</a>.</span></li>
+    <li><span>You already use Copilot in class. If you don't have it yet, verified students get Copilot for free through GitHub Education: <a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/enable-copilot/set-up-for-students">how to get Copilot as a student</a>.</span></li>
+    <li><span>In VS Code, click the <b>Accounts</b> icon (the person icon) near the bottom of the bar on the far left. If your GitHub username isn't there, choose the option to sign in with GitHub, and finish signing in on the web page that opens.</span></li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>Your GitHub username in the <b>Accounts</b> menu.</p></div>
+</section>
+
+<section class="unit" id="git-setup" data-n="5" data-part="2" data-do>
+  <h3>Set up Git: install it, and tell it your name</h3>
+  <p class="why"><b>Why:</b> VS Code's GitHub buttons (Publish, Commit, Sync and Clone) all use a free program called <b>Git</b>. VS Code doesn't include Git, so it must be installed once on your computer. Git also writes your <b>name</b> and <b>email</b> on every commit, so everyone can see who saved each version. Without them, your first commit stops with an error, or gets labeled with your computer's name instead of yours.</p>
+  <p class="sub">A. Is Git installed?</p>
+  <ol class="do">
+    <li><span>Click the <b>Source Control</b> icon in the bar on the far left (<kbd class="win">Ctrl+Shift+G</kbd><kbd class="mac">⌃⇧G</kbd>).</span></li>
+    <li><span>Look at what it shows:</span>
+      <ul>
+        <li><b>Initialize Repository</b> and <b>Publish to GitHub</b> buttons: Git is ready. <b>Don't click either button yet</b> (you publish in step 8). Go on to part B.</li>
+        <li>A <b>Download Git for <span class="win">Windows</span><span class="mac">macOS</span></b> button: Git isn't installed yet. Do items 3 and 4 below.</li>
+      </ul>
+      <figure><img src="figures/f_scm_publish.png" width="350" height="350" alt="VS Code Source Control view with Initialize Repository and Publish to GitHub buttons; the Source Control icon is marked 1 and the Publish to GitHub button is marked 2" loading="lazy"><figcaption>Git is ready: Source Control shows Initialize Repository and Publish to GitHub.</figcaption></figure>
+    </li>
+    <li class="win"><span><b>Install Git.</b> Click <b>Download Git for Windows</b>. On the web page that opens, click <b>Click here to download</b>. When the download finishes, open the file. Its name starts with <code>Git-</code> and ends with <code>.exe</code>, and you'll find it in your browser's list of downloads or in your <b>Downloads</b> folder. Click <b>Yes</b> if Windows asks to allow changes. Click <b>Next</b> on every screen, then <b>Install</b>, then <b>Finish</b>. The default choices are fine.</span></li>
+    <li class="mac"><span><b>Install Git.</b> On a Mac, Git comes with Apple's free <b>command line developer tools</b>. Don't use the Download Git for macOS button: Apple's tools are easier.</span>
+      <ul>
+        <li>If a window says the <i>git</i> command requires the command line developer tools, click <b>Install</b>, then <b>Agree</b>, and wait until it says the software was installed. This can take 5 to 15 minutes.</li>
+        <li>No window? Ask Copilot, as shown below. Copilot asks to run a command (<code>xcode-select --install</code>): click <b>Allow</b>. In the window that opens, click <b>Install</b>, then <b>Agree</b>. Wait until the window says the software was installed, even if Copilot says it's finished.</li>
+      </ul>
+      <div class="box copilot">
+        <p class="lbl"><span class="spark"></span> Ask Copilot <span class="where">Chat view, Agent</span></p>
+        <p class="prompt">Install Git on my Mac, with Apple's command line developer tools</p>
+      </div>
+    </li>
+    <li><span><b>After you install Git, close VS Code completely, then open it again.</b> VS Code looks for Git only when it starts. <span class="win">Close every VS Code window (or click <b>File ▸ Exit</b>).</span><span class="mac">Click <b>Code ▸ Quit Visual Studio Code</b> (<kbd>⌘Q</kbd>). Closing the window isn't enough.</span> When you open VS Code again, it opens your <code>pinecone-sales</code> folder, and Source Control shows <b>Publish to GitHub</b>.</span></li>
+  </ol>
+  <p class="sub">B. Tell Git who you are</p>
+  <ol class="do">
+    <li><span>Type your name and the email of your GitHub account here. The prompt below fills them in for you. Nothing you type leaves this page.</span>
+      <p class="small">Your email is shown on every commit you make. To keep it private, use GitHub's private <i>noreply</i> address instead: on github.com, click your profile picture (top right) ▸ <b>Settings</b> ▸ <b>Emails</b>, and copy the address that ends in <code class="wrap">@users.noreply.github.com</code>.</p>
+      <div class="fields">
+        <label>Your name<input type="text" id="f-name" autocomplete="name" placeholder="Your Name"></label>
+        <label>Your GitHub email<input type="email" id="f-email" autocomplete="email" placeholder="you@example.com"></label>
+      </div>
+    </li>
+    <li><span>Ask Copilot:</span>
+      <div class="box copilot">
+        <p class="lbl"><span class="spark"></span> Ask Copilot <span class="where">Chat view, Agent</span></p>
+        <p class="prompt">Set my Git user name to "<span class="fill" data-fill="name">Your Name</span>" and my email to "<span class="fill" data-fill="email">you@example.com</span>" for all my projects. Also make git pull merge instead of rebase.</p>
+        <p><b>Check:</b> Copilot shows the commands it wants to run. They start with <code>git config --global</code>, and your name and email are in them. Then click <b>Allow</b>. (Copilot may ask once for each command.)</p>
+      </div>
+    </li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>Source Control shows <b>Publish to GitHub</b>, and Copilot says that your name and email are set.</p></div>
+  <p><b>What the last sentence of the prompt does:</b> sometimes your laptop and GitHub both have new commits. This setting tells Git to combine them (merge), instead of stopping with an error when you sync.</p>
+  <p>If you skip part B, your first commit may stop with this error:</p>
+  <figure><img src="figures/f_identity_error.png" width="452" height="118" alt="VS Code error: Make sure you configure your user.name and user.email in git" loading="lazy"></figure>
+</section>
+
+<!-- ============================== PART 3 ============================== -->
+<section class="part" id="part3" data-part="3">
+  <p class="eyebrow">Part 3</p>
+  <h2>Put it on GitHub</h2>
+  <p>This is the main job: your project folder goes up to GitHub, without its private files. Step 6 explains the ideas, step 7 makes the do-not-upload list, and step 8 uploads the project.</p>
+</section>
+
+<section class="unit" id="ideas" data-n="6" data-part="3">
+  <h3>How GitHub works, in one picture</h3>
+  <p>Three names, three jobs:</p>
+  <ul>
+    <li><b>Git</b> is a free program on your laptop. It saves versions of your project folder. Each saved version is a <b>commit</b>, with a short message, a name and a date. No more <code>report_final_REAL.ipynb</code>: one file, and every version saved.</li>
+    <li><b>GitHub</b> (github.com) keeps a copy of your project online, with the same commits. It's a backup, and you can share it.</li>
+    <li><b>VS Code</b> has a <b>Source Control</b> panel with buttons that run Git and talk to GitHub for you.</li>
+  </ul>
+  <div class="diagram">
+    <svg viewBox="0 0 800 360" role="img" aria-label="Your laptop holds the project folder and a local repository of commits. Push copies commits to the remote repository on GitHub, called origin; pull copies them back.">
+      <rect x="10" y="10" width="320" height="340" rx="16" class="d-soft"/>
+      <text x="30" y="44" class="d-t" style="font-size:20px">Your laptop</text>
+      <rect x="30" y="62" width="280" height="110" rx="10" class="d-box"/>
+      <text x="46" y="88" class="d-t">Project folder</text>
+      <text x="46" y="108" class="d-s">the files you edit and run</text>
+      <text x="46" y="134" class="d-m">analysis.py   report.ipynb</text>
+      <text x="46" y="156" class="d-m">data/sales.csv</text>
+      <line x1="170" y1="176" x2="170" y2="208" class="d-l d-ink" marker-end="url(#ar-ink)"/>
+      <text x="182" y="198" class="d-lab ink">Commit</text>
+      <rect x="30" y="214" width="280" height="122" rx="10" class="d-box"/>
+      <text x="46" y="240" class="d-t">Local repository</text>
+      <text x="46" y="260" class="d-s">saved versions (commits)</text>
+      <text x="46" y="284" class="d-m">● Add notebook results</text>
+      <text x="46" y="304" class="d-m">● Add average cups per day</text>
+      <text x="46" y="324" class="d-m">● first commit</text>
+      <rect x="470" y="10" width="320" height="340" rx="16" class="d-soft"/>
+      <text x="490" y="44" class="d-t" style="font-size:20px">GitHub (online)</text>
+      <text x="490" y="96" class="d-t" style="fill:var(--p2)">Sync = Pull, then Push</text>
+      <text x="490" y="122" class="d-s">Clone = the first download,</text>
+      <text x="490" y="140" class="d-s">with all the history</text>
+      <rect x="490" y="214" width="280" height="122" rx="10" class="d-box"/>
+      <text x="506" y="240" class="d-t">Remote repository</text>
+      <text x="506" y="262" class="d-m">github.com/you/pinecone-sales</text>
+      <text x="506" y="286" class="d-s">the same commits, online</text>
+      <text x="506" y="306" class="d-s">nicknamed origin</text>
+      <line x1="314" y1="252" x2="484" y2="252" class="d-l d-click" marker-end="url(#ar-click)"/>
+      <text x="400" y="240" text-anchor="middle" class="d-lab click">Push (upload)</text>
+      <line x1="484" y1="302" x2="314" y2="302" class="d-l d-green" marker-end="url(#ar-green)"/>
+      <text x="400" y="328" text-anchor="middle" class="d-lab green">Pull (download)</text>
+    </svg>
+  </div>
+  <p>Read the picture from left to right. When your work reaches a good point, you <b>commit</b>: Git saves a version of the whole project folder, on your laptop. <b>Push</b> sends your commits up to GitHub. <b>Pull</b> brings new commits down. In VS Code, the <span class="btn">Sync Changes</span> button does both: it pulls, then pushes.</p>
+  <p><b>Words you will hear.</b> Come back to this table whenever a word feels unclear.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Word</th><th>What it means</th><th>Think of it as</th></tr></thead>
+    <tbody>
+      <tr><td>Repository (repo)</td><td>A project folder that Git keeps track of</td><td>A folder with a memory</td></tr>
+      <tr><td>Commit</td><td>A saved version of the project, with a short message</td><td>A save point in a game</td></tr>
+      <tr><td>Push</td><td>Send your commits up to GitHub</td><td>Upload</td></tr>
+      <tr><td>Pull</td><td>Bring new commits down from GitHub</td><td>Download the latest</td></tr>
+      <tr><td>Sync</td><td>Pull, then push, with one button</td><td>Two-way update</td></tr>
+      <tr><td>Clone</td><td>Copy a repository from GitHub to a computer, with all its history</td><td>The first full download</td></tr>
+      <tr><td>Remote (origin)</td><td>The GitHub copy that your folder is linked to</td><td>The online twin</td></tr>
+      <tr><td>Branch (main)</td><td>A line of work. Every project starts with one, named <code>main</code></td><td>In this course you stay on <code>main</code></td></tr>
+      <tr><td>.gitignore</td><td>A list of files Git must never save or upload</td><td>The do-not-upload list</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="unit" id="gitignore" data-n="7" data-part="3" data-do>
+  <h3>Keep private files off GitHub: .gitignore</h3>
+  <p class="why"><b>Why:</b> your folder has two files that must <b>never</b> leave your laptop: <code>.env</code> (a key) and <code>data/customers_private.csv</code> (customer names and emails). A file named <code>.gitignore</code> lists files like these. (The dot at the start is part of the name.) Git skips everything on the list. Those files stay in your folder, but they're never saved in a commit and never uploaded.</p>
+  <p>Make the <code>.gitignore</code> <b>before</b> your first upload. Once a file is on GitHub, it stays in the project's history, even if you delete it later.</p>
+  <div class="box copilot">
+    <p class="lbl"><span class="spark"></span> Ask Copilot <span class="where">Chat view, Agent</span></p>
+    <p class="prompt">Create a .gitignore that ignores only these five items: .env, data/customers_private.csv, __pycache__/, .ipynb_checkpoints/ and .venv/</p>
+    <p><b>Check:</b> the <code>.gitignore</code> lists those five items, and no line like <code>data/</code> or <code>*.csv</code> (that would keep your sales data off GitHub too). Copilot may add notes that start with <code>#</code>; Git skips those lines. Click <b>Keep</b>.</p>
+  </div>
+  <figure><img src="figures/f_gitignore.png" width="438" height="256" alt="The .gitignore file listing __pycache__/, .venv/, .ipynb_checkpoints/, .env and data/customers_private.csv" loading="lazy"><figcaption>The .gitignore file.</figcaption></figure>
+  <div class="box check"><p class="lbl">You should see</p><p>A new file, <code>.gitignore</code>, in the Explorer, with those five items in it. It starts to work in step 8, when your folder becomes a Git repository.</p></div>
+  <p><b>What goes in a <code>.gitignore</code>:</b></p>
+  <div class="tbl"><table>
+    <thead><tr><th>Item</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><code>.env</code></td><td>Passwords and keys (API keys) live here</td></tr>
+      <tr><td><code>data/customers_private.csv</code></td><td>Private data: names and emails</td></tr>
+      <tr><td><code>__pycache__/</code> and <code>.ipynb_checkpoints/</code></td><td>Folders that Python and Jupyter make by themselves</td></tr>
+      <tr><td><code>.venv/</code></td><td>A virtual environment: big, and anyone can rebuild it</td></tr>
+      <tr><td>Very large data files</td><td>GitHub refuses files over 100 MiB (<a href="#habits">step 21</a>)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="box tip"><p class="lbl">Your own projects</p><p>Your own project folders won't come with a <code>.gitignore</code>. Before you publish one, ask Copilot for one, and name every private or very large file in your prompt.</p></div>
+</section>
+
+<section class="unit" id="publish" data-n="8" data-part="3" data-do>
+  <h3>Publish to GitHub: your first upload</h3>
+  <p class="why"><b>Why:</b> publishing puts your project on GitHub for the first time. One button does four jobs: it creates the repository on GitHub, saves a first commit, uploads it, and links your folder to it.</p>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>Click <b>Source Control</b> in the bar on the far left (<kbd class="win">Ctrl+Shift+G</kbd><kbd class="mac">⌃⇧G</kbd>).</span></li>
+    <li><span>Click the blue <b>Publish to GitHub</b> button.</span>
+      <figure><img src="figures/f_scm_publish.png" width="350" height="350" alt="VS Code Source Control view with the Source Control icon marked 1 and the Publish to GitHub button marked 2" loading="lazy"></figure>
+    </li>
+    <li><span>If VS Code says <i>The extension 'GitHub' wants to sign in using GitHub</i>, click <b>Allow</b>. Your browser opens GitHub: sign in if it asks, and click <b>Authorize</b>. If the browser asks to open Visual Studio Code, click <b>Open</b>. Then go back to VS Code.</span>
+      <figure><img src="figures/f_signin.png" width="452" height="102" alt="Dialog: The extension GitHub wants to sign in using GitHub, with Allow highlighted" loading="lazy"></figure>
+    </li>
+    <li><span>A box opens at the top of VS Code with your folder's name, <code>pinecone-sales</code>. (Does it say <code>BAN501</code>? Press <kbd>Esc</kbd>: you opened the folder above the project. Go back to <a href="#open-folder">step 2</a>.) Keep the name, and click <b>Publish to GitHub private repository</b>.</span>
+      <div class="qp" role="img" aria-label="The box at the top of VS Code: pinecone-sales, with Publish to GitHub private repository selected and Publish to GitHub public repository below it">
+        <div class="qp-in">pinecone-sales</div>
+        <div class="qp-row sel"><span>Publish to GitHub private repository</span><span class="qp-r">your-username/pinecone-sales</span></div>
+        <div class="qp-row"><span>Publish to GitHub public repository</span><span class="qp-r">your-username/pinecone-sales</span></div>
+      </div>
+      <div class="tbl"><table>
+        <thead><tr><th>Choice</th><th>Who can see it</th><th>Use it for</th></tr></thead>
+        <tbody>
+          <tr><td>Private repository</td><td>Only you, and people you invite</td><td><b>Class work.</b> Graded work always goes in a private repository</td></tr>
+          <tr><td>Public repository</td><td>Anyone on the internet</td><td>A portfolio project, after you check that it has no passwords or private data</td></tr>
+        </tbody>
+      </table></div>
+    </li>
+    <li><span>Wait a few seconds while VS Code uploads your project.<span class="win"> If a <b>Connect to GitHub</b> window opens, click <b>Sign in with your browser</b>, then click <b>Authorize</b> on the web page that opens, and go back to VS Code.</span> When VS Code says the repository was published, click <b>Open on GitHub</b>.</span></li>
+    <li><span>Back in VS Code, a second message may ask: <i>Would you like Visual Studio Code to periodically run "git fetch"?</i> Click <b>Yes</b>. VS Code then checks GitHub for new commits now and then. Fetching never changes your files; it only shows you what's new.</span>
+      <figure><img src="figures/f_autofetch.png" width="454" height="94" alt="Notification: Would you like Visual Studio Code to periodically run git fetch? Yes highlighted" loading="lazy"></figure>
+    </li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p>
+    <p>Your repository on GitHub, with the <code>data</code> folder, <code>.gitignore</code>, <code>README.md</code>, <code>analysis.py</code>, <code>report.ipynb</code> and <code>requirements.txt</code>. GitHub shows your README below the list of files. Open the <code>data</code> folder: only <code>sales.csv</code> is there. <b><code>.env</code> and <code>customers_private.csv</code> are not on GitHub.</b> The <code>.gitignore</code> works.</p>
+    <p>Back in VS Code, the two private files are still in your folder. Git just leaves them out.</p>
+  </div>
+  <figure><img src="figures/f_explorer_private.png" width="280" height="172" alt="Explorer showing data/customers_private.csv and .env circled: they are still in the folder" loading="lazy"><figcaption>The private files stay on your computer.</figcaption></figure>
+  <div class="box tip"><p class="lbl">If something goes wrong</p>
+    <ul>
+      <li>A list of files with check boxes appeared (<i>Select which files should be included in the repository</i>)? Your folder has no <code>.gitignore</code>. Press <kbd>Esc</kbd>, do <a href="#gitignore">step 7</a>, then publish again.</li>
+      <li>No <code>data</code> folder on GitHub, or no <code>sales.csv</code> in it? Your <code>.gitignore</code> hides it. Ask Copilot: <i>Remove the line in .gitignore that hides data/sales.csv</i>. Then commit and push, as in <a href="#commit">steps 11</a> and <a href="#push">12</a>.</li>
+      <li>Clicked <b>Initialize Repository</b> instead? That only starts tracking your folder on your laptop; nothing is uploaded. Type <i>first commit</i> in the message box, click <b>Commit</b>, then click <b>Yes</b> to stage all your changes. The blue button changes to <b>Publish Branch</b>, which uploads the same way.</li>
+    </ul>
+  </div>
+  <div class="box tip"><p class="lbl">Later: make it public, or private again</p>
+    <p>VS Code asks <i>private or public?</i> only once, when you publish. To change it later, use the GitHub website:</p>
+    <ol class="do">
+      <li><span>Open your repository on github.com, and click <b>Settings</b> (the tab with the gear, under the repository name).</span></li>
+      <li><span>Scroll to the bottom of the page, to the <b>Danger Zone</b>. Next to <b>Change repository visibility</b>, click <b>Change visibility</b>, and choose public (or private).</span></li>
+      <li><span>GitHub asks you to confirm a few times. Read each message, then click <b>Make this repository public</b> (or private).</span></li>
+    </ol>
+    <p><b>Before you make a repository public,</b> remember that its whole history becomes public too: everything you ever committed, even a file you deleted later. Graded work stays private.</p>
+  </div>
+</section>
+
+<!-- ============================== PART 4 ============================== -->
+<section class="part" id="part4" data-part="4">
+  <p class="eyebrow">Part 4</p>
+  <h2>Keep it up to date</h2>
+  <p>Your project is on GitHub. When you change it, you save a version and upload it (steps 9 to 13). When it changes on GitHub, you bring the change down (steps 14 and 15).</p>
+</section>
+
+<section class="unit" id="loop" data-n="9" data-part="4">
+  <h3>The everyday loop: change, commit, push</h3>
+  <p>You publish a project <b>once</b>. From now on, every time your work reaches a good point, you repeat five steps:</p>
+  <ol class="loop">
+    <li><span class="k">1</span><b>Change &amp; save</b><span>Save a file (<kbd class="win">Ctrl+S</kbd><kbd class="mac">⌘S</kbd>). Git notices the change.</span></li>
+    <li><span class="k">2</span><b>Review</b><span>See what changed: red is the old version, green is the new one.</span></li>
+    <li><span class="k">3</span><b>Stage</b><span>Pick the files for this save point with <b>+</b>.</span></li>
+    <li><span class="k">4</span><b>Commit</b><span>Save a version, with a short message.</span></li>
+    <li><span class="k">5</span><b>Push</b><span>Send your commits to GitHub (or <b>Sync</b>: pull, then push).</span></li>
+  </ol>
+  <p>Two ideas to remember:</p>
+  <ul>
+    <li><b>Commit</b> = a save point <b>on your laptop</b>.</li>
+    <li><b>Push</b> = send your save points <b>to GitHub</b>. <b>Sync</b> does it too, after a pull.</li>
+  </ul>
+  <p>Commit whenever something works: the data loads, a chart looks right, a bug is fixed. Small, frequent commits are best, because each one is easy to understand and easy to undo. You'll do the loop twice: in steps 10 to 12, and again in step 13.</p>
+</section>
+
+<section class="unit" id="change" data-n="10" data-part="4" data-do>
+  <h3>Change a file, and see what changed</h3>
+  <p class="why"><b>Why:</b> Git notices every change you save, and shows you exactly what changed. Look at your changes before every commit: this is when you catch mistakes.</p>
+  <div class="box copilot">
+    <p class="lbl"><span class="spark"></span> Ask Copilot <span class="where">Chat view, Agent</span></p>
+    <p class="prompt">In analysis.py, also print the average cups per day.</p>
+    <p><b>Check:</b> click <b>Keep</b>, and run the file again with <b>▷</b>. It now also prints the average cups per day.</p>
+  </div>
+  <figure><img src="figures/f_run.png" width="550" height="392" alt="Terminal: analysis.py prints cups and revenue by drink, the top drink, and the average cups per day for each drink" loading="lazy"></figure>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>Open <b>Source Control</b>. <code>analysis.py</code> is under <b>Changes</b>, with an <b>M</b>: modified.</span>
+      <figure><img src="figures/f_modified_list.png" width="296" height="180" alt="Source Control: analysis.py listed under Changes with the letter M" loading="lazy"></figure>
+    </li>
+    <li><span><b>Click the file</b> to compare the two versions. <b>Red lines are the old version. Green lines are the new version.</b> In a wide window, the old version is on the left and the new one on the right. In a narrow window, they're shown one above the other.</span>
+      <figure><img src="figures/f_diff.png" width="1057" height="392" alt="Side-by-side comparison of analysis.py: the old lines in red on the left, the new lines in green on the right" loading="lazy"></figure>
+    </li>
+    <li><span>Go back to the file in the editor (click its tab). A colored bar in the margin marks the lines that changed: <b>green</b> for new lines, <b>blue</b> for changed lines, and a small <b>red</b> triangle where lines were deleted.</span>
+      <figure><img src="figures/f_gutter.png" width="524" height="144" alt="Editor margin with a green bar next to the new lines 14 to 18" loading="lazy"></figure>
+    </li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p><code>analysis.py</code> under <b>Changes</b> with an <b>M</b>, and its new lines in green.</p></div>
+</section>
+
+<section class="unit" id="commit" data-n="11" data-part="4" data-do>
+  <h3>Commit: save a version</h3>
+  <p class="why"><b>Why:</b> a commit is a save point. Before you commit, you <b>stage</b> the files that belong in it. Think of packing a box: staging puts things in the box, and committing seals it with a label, the message.</p>
+  <p>Under <b>Changes</b>, every file that is new or changed since the last commit has a letter:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Letter</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>M</td><td>Modified since the last commit. <code>analysis.py</code> shows <b>M</b> now</td></tr>
+      <tr><td>U</td><td>Untracked: a new file, never saved in Git before</td></tr>
+      <tr><td>A</td><td>Added: a new file that you have staged</td></tr>
+      <tr><td>D</td><td>Deleted</td></tr>
+    </tbody>
+  </table></div>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span><b>Stage:</b> hover over <code>analysis.py</code> under <b>Changes</b> and click <b>+</b>. The file moves up to <b>Staged Changes</b>.</span>
+      <figure><img src="figures/f_stage_plus.png" width="296" height="175" alt="Hovering analysis.py in Changes shows a plus button, highlighted" loading="lazy"></figure>
+    </li>
+    <li><span><b>Message:</b> click the <b>sparkle</b> button at the right end of the message box. Its tooltip says <b>Generate Commit Message</b>. Copilot reads your changes and writes a message. Read it, and shorten or fix it so it says what you did, for example <i>Add average cups per day</i>.</span>
+      <figure><img src="figures/f_sparkle.png" width="392" height="52" alt="The commit message box, Message (Ctrl+Enter to commit…), with the sparkle button at its right end outlined" loading="lazy"><figcaption>The sparkle button, at the right end of the message box.</figcaption></figure>
+    </li>
+    <li><span><b>Commit:</b> click <b>Commit</b>.</span>
+      <figure><img src="figures/f_message_commit.png" width="296" height="175" alt="Commit message box with Add average cups per day marked 1, and the Commit button marked 2" loading="lazy"></figure>
+    </li>
+  </ol>
+  <p>Write messages that say what you did, so you can find the right version later:</p>
+  <div class="tbl"><table class="plain">
+    <thead><tr><th>Good messages</th><th>Bad messages</th></tr></thead>
+    <tbody>
+      <tr><td><i>Add average cups per day</i></td><td><i>update</i></td></tr>
+      <tr><td><i>Add revenue chart</i></td><td><i>stuff</i></td></tr>
+      <tr><td><i>Fix price for Iced Tea</i></td><td><i>asdf</i></td></tr>
+    </tbody>
+  </table></div>
+  <div class="box tip"><p class="lbl">Shortcut</p><p>Write the message first (or click the <b>sparkle</b>). Then click <b>Commit</b> with nothing staged: VS Code offers to stage all your changes and commit them. Click <b>Yes</b>.</p>
+    <figure><img src="figures/f_smart_commit.png" width="452" height="158" alt="Dialog: There are no staged changes to commit. Would you like to stage all your changes and commit them directly? Yes is highlighted" loading="lazy"></figure>
+  </div>
+  <div class="box check"><p class="lbl">You should see</p><p>The list of changes is empty, and the blue button now says <span class="btn">Sync Changes 1↑</span>.</p></div>
+</section>
+
+<section class="unit" id="push" data-n="12" data-part="4" data-do>
+  <h3>Push: send your commit to GitHub</h3>
+  <p class="why"><b>Why:</b> a commit is saved <b>on your laptop</b> only. <b>Pushing</b> sends it up to GitHub.</p>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>Look at the blue button: <span class="btn">Sync Changes 1↑</span> means one commit is waiting to go up. The status bar at the bottom of VS Code shows the same: <b>0↓ 1↑</b>.</span>
+      <div class="figs">
+        <figure><img src="figures/f_sync_up.png" width="296" height="138" alt="The blue button now reads Sync Changes 1 with an up arrow" loading="lazy"></figure>
+        <figure><img src="figures/f_status_out.png" width="240" height="26" alt="Status bar: branch main, sync icon, 0 down arrow, 1 up arrow" loading="lazy"></figure>
+      </div>
+    </li>
+    <li><span>Open the <b>Graph</b> at the bottom of Source Control. Your new commit is under <b>Outgoing Changes</b>: it's on your laptop, not on GitHub yet.</span>
+      <figure><img src="figures/f_graph_outgoing.png" width="296" height="98" alt="Graph showing Outgoing Changes: Add average cups per day on main, above an older commit on origin/main" loading="lazy"></figure>
+    </li>
+    <li><span><b>Push:</b> click <b>···</b> (More Actions) at the top of Source Control, then <b>Push</b>. (Or open the Command Palette, <kbd class="win">Ctrl+Shift+P</kbd><kbd class="mac">⇧⌘P</kbd>, and run <b>Git: Push</b>.)</span></li>
+    <li><span>Refresh your repository's page on GitHub, and click <code>analysis.py</code>.</span></li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>The new lines for the average cups per day in <code>analysis.py</code> on GitHub. In VS Code, the Graph no longer shows Outgoing Changes.</p></div>
+  <div class="box tip"><p class="lbl">Push or Sync Changes?</p><p><b>Push</b> only sends your commits up. The blue <span class="btn">Sync Changes</span> button does two jobs: it <b>pulls</b> new commits down from GitHub first, then <b>pushes</b> yours up. Most of the time, use Sync Changes: if GitHub has commits that you don't have yet, a push alone fails, and Sync Changes fixes that by pulling first. You'll use it in the next step.</p></div>
+  <div class="box warn"><p class="lbl">Remember</p><p>A commit stays on your laptop until you push or sync. <b>Not pushed = not on GitHub</b>: your instructor and your teammates can't see it yet.</p></div>
+</section>
+
+<section class="unit" id="notebook" data-n="13" data-part="4" data-do>
+  <h3>Run the notebook, and upload its results</h3>
+  <p class="why"><b>Why:</b> a notebook can save its results (tables and charts) inside the file, and GitHub shows them.</p>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>On GitHub, open <code>report.ipynb</code>. You see only code: nobody has run it yet.</span></li>
+    <li><span>In VS Code, open <code>report.ipynb</code>. Click <b>Select Kernel</b> at the top right, choose <b>Python Environments</b>, and pick the Python you use in class.</span></li>
+    <li><span>Click <b>Run All</b>. If VS Code asks to install <code>ipykernel</code>, click <b>Install</b>.</span>
+      <figure><img src="figures/f_nb_toolbar2.png" width="616" height="36" alt="Notebook toolbar: Run All marked 2, Select Kernel marked 1" loading="lazy"></figure>
+      <figure><img src="figures/f_nb_chart.png" width="520" height="512" alt="Notebook after running: revenue table and a horizontal bar chart of revenue by drink" loading="lazy"></figure>
+    </li>
+    <li><span><b>Save the notebook:</b> <kbd class="win">Ctrl+S</kbd><kbd class="mac">⌘S</kbd>. The table and chart go into the file only when you save, so save before you commit.</span></li>
+    <li><span><b>Commit:</b> stage <code>report.ipynb</code> with <b>+</b>, let the <b>sparkle</b> write the message, and click <b>Commit</b>.</span></li>
+    <li><span><b>Sync:</b> this time, click the blue <b>Sync Changes</b> button: it pulls, then pushes. VS Code asks before it pulls and pushes. Click <b>OK</b>. (It asks on every sync. If you don't want to be asked again, click <b>OK, Don't Show Again</b>.)</span>
+      <figure><img src="figures/f_sync_confirm.png" width="452" height="118" alt="Dialog: This action will pull and push commits from and to origin/main, with OK highlighted" loading="lazy"></figure>
+    </li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>A revenue table and a bar chart, with no errors. On GitHub, open <code>report.ipynb</code> again: now GitHub shows its table and chart.</p></div>
+  <div class="box tip"><p class="lbl">If something goes wrong</p><p><code>No module named 'matplotlib'</code>? Ask Copilot: <i>Install matplotlib for the Python this notebook uses</i>, click <b>Allow</b>, then click <b>Run All</b> again.</p></div>
+  <div class="box tip"><p class="lbl">Good to know about notebooks</p>
+    <p>A notebook saves its <b>outputs</b> (tables, charts, printed text) <b>inside the file</b>. That's good, because GitHub shows your results. But the outputs make the file bigger, and they can hold private data, for example a table of customer names. When outputs are big or private, clear them before you commit: open the Command Palette (<kbd class="win">Ctrl+Shift+P</kbd><kbd class="mac">⇧⌘P</kbd>), run <b>Notebook: Clear All Outputs</b>, then save (<kbd class="win">Ctrl+S</kbd><kbd class="mac">⌘S</kbd>).</p>
+    <figure><img src="figures/f_palette_clear.png" width="602" height="114" alt="Command Palette with Notebook: Clear All Outputs highlighted" loading="lazy"></figure>
+  </div>
+</section>
+
+<section class="unit" id="edit-on-github" data-n="14" data-part="4" data-do>
+  <h3>A change on GitHub: edit the README there</h3>
+  <p class="why"><b>Why:</b> sometimes a project changes on GitHub, not on your laptop: a teammate pushed a commit, or you fixed something on another computer. To practice, you make that kind of change yourself, on github.com.</p>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>Open your repository on github.com. In the list of files, click <code>README.md</code>.</span></li>
+    <li><span>Click the <b>pencil</b> icon at the top right of the file to edit it.</span></li>
+    <li><span>Click at the end of the first line (the title), press <kbd>Enter</kbd> twice, and type: <i>The data covers August to October 2026.</i></span></li>
+    <li><span>Click the green <b>Commit changes…</b> button. In the window that opens, keep the message (<i>Update README.md</i>) and keep <b>Commit directly to the main branch</b>. Click <b>Commit changes</b>.</span></li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>The new line in the README on GitHub. Now GitHub has a commit that your laptop doesn't have yet.</p></div>
+</section>
+
+<section class="unit" id="pull" data-n="15" data-part="4" data-do>
+  <h3>Pull: bring the change down to your laptop</h3>
+  <p class="why"><b>Why:</b> your laptop is now one commit behind GitHub. <b>Pulling</b> brings that commit down. It works the same way with a teammate: they push, you pull.</p>
+  <div class="diagram">
+    <svg viewBox="0 0 800 130" role="img" aria-label="A teammate pushes from their laptop to GitHub; you pull from GitHub to your laptop">
+      <rect x="10" y="45" width="190" height="70" rx="12" class="d-box"/><text x="105" y="86" text-anchor="middle" class="d-t">A teammate</text>
+      <rect x="305" y="45" width="190" height="70" rx="12" class="d-a2"/><text x="400" y="86" text-anchor="middle" class="d-t d-on">GitHub</text>
+      <rect x="600" y="45" width="190" height="70" rx="12" class="d-a1"/><text x="695" y="86" text-anchor="middle" class="d-t d-on">Your laptop</text>
+      <line x1="204" y1="80" x2="298" y2="80" class="d-l d-click" marker-end="url(#ar-click)"/><text x="252" y="50" text-anchor="middle" class="d-lab click">They push</text>
+      <line x1="499" y1="80" x2="593" y2="80" class="d-l d-green" marker-end="url(#ar-green)"/><text x="547" y="50" text-anchor="middle" class="d-lab green">You pull</text>
+    </svg>
+  </div>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>In VS Code, open <b>Source Control</b>, click <b>···</b> (More Actions) at the top, then <b>Pull</b>.</span>
+      <p>If VS Code has already checked GitHub (you clicked <b>Yes</b> to fetching in step 8), the blue button says <span class="btn">Sync Changes 1↓</span>, and the <b>Graph</b> shows the new commit under <b>Incoming Changes</b>. Clicking <b>Sync Changes</b> pulls it the same way.</p>
+      <div class="figs">
+        <figure><img src="figures/f_sync_updown.png" width="296" height="138" alt="Button reads Sync Changes with a down arrow and an up arrow" loading="lazy"><figcaption>This button shows 1↓ 1↑: one commit to bring down and one to send up. Yours shows 1↓.</figcaption></figure>
+        <figure><img src="figures/f_graph_incoming.png" width="296" height="206" alt="Graph with Incoming Changes from origin/main, outlined" loading="lazy"></figure>
+      </div>
+    </li>
+    <li><span>Open <code>README.md</code>: the new line is there.</span></li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>The new README line on your laptop, the same as on GitHub.</p></div>
+  <div class="box warn"><p class="lbl">Two rules for every project</p>
+    <ul>
+      <li><b>Pull before you start working</b>, so you begin with the newest version.</li>
+      <li><b>Commit your own work before you pull</b>, so nothing gets overwritten.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================== PART 5 ============================== -->
+<section class="part" id="part5" data-part="5">
+  <p class="eyebrow">Part 5</p>
+  <h2>Look back, and undo</h2>
+  <p>Every commit stays in the history. In steps 16 and 17 you look back through it, and undo mistakes safely.</p>
+</section>
+
+<section class="unit" id="history" data-n="16" data-part="5" data-do>
+  <h3>Look back in time: Graph and Timeline</h3>
+  <p class="why"><b>Why:</b> nothing you commit is lost. You can see who changed what and when, and look at any old version.</p>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>Open <b>Source Control ▸ Graph</b>. It lists every commit, with its message and who made it: <i>first commit</i>, your two commits, and <i>Update README.md</i> from GitHub. Hover over a commit to see when it was made.</span>
+      <figure><img src="figures/f_graph.png" width="512" height="184" alt="Source Control Graph: seven commits by two people, with two lines that join in a merge commit at the top" loading="lazy"><figcaption>The Graph of a team project: two people's commits, and two lines of work joined at the top. Your Graph is a single line.</figcaption></figure>
+    </li>
+    <li><span>Open <code>analysis.py</code>. In the Explorer, open <b>Timeline</b> at the bottom. It shows the history of the one file you have open.</span>
+      <figure><img src="figures/f_timeline.png" width="506" height="116" alt="Timeline for analysis.py: two commits and two file saves" loading="lazy"></figure>
+    </li>
+    <li><span>Click the oldest commit in the Timeline, <i>first commit</i>. Every line is green, because this commit added the file to Git. Then click the newer commit: it shows only the lines you added in step 10.</span></li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>The first version of <code>analysis.py</code>, before you added the average cups per day.</p></div>
+</section>
+
+<section class="unit" id="undo" data-n="17" data-part="5" data-do>
+  <h3>Undo safely</h3>
+  <p class="why"><b>Why:</b> everyone makes mistakes. Most undos are one click in <b>Source Control</b>:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>I want to…</th><th>Do this</th><th>Good to know</th></tr></thead>
+    <tbody>
+      <tr><td>Take a file out of the next commit</td><td><b>Unstage</b>: click <b>−</b> next to it under <b>Staged Changes</b></td><td>Safe: your edits stay</td></tr>
+      <tr><td>Throw away edits I haven't committed</td><td><b>Discard Changes</b>: the curved-arrow icon next to the file</td><td><b>Can't be undone</b></td></tr>
+      <tr><td>Undo my last commit (not synced yet)</td><td><b>··· ▸ Commit ▸ Undo Last Commit</b></td><td>Only <b>before</b> you sync</td></tr>
+      <tr><td>Undo a commit that is already on GitHub</td><td><b>Revert</b> it, with Copilot</td><td>Adds a new commit that undoes the old one; safe</td></tr>
+      <tr><td>See an old version of a file</td><td><b>Explorer ▸ Timeline</b>, then click a version</td><td>Read-only</td></tr>
+    </tbody>
+  </table></div>
+  <figure><img src="figures/f_commit_menu.png" width="524" height="116" alt="Source Control More Actions menu: Commit submenu open with Undo Last Commit outlined" loading="lazy"><figcaption>Undo Last Commit is in the ··· menu of Source Control, under Commit.</figcaption></figure>
+  <p class="sub">Try all three undos</p>
+  <ol class="do abc">
+    <li><span><b>Throw away an edit.</b></span>
+      <div class="box copilot">
+        <p class="lbl"><span class="spark"></span> Ask Copilot <span class="where">Chat view, Agent</span></p>
+        <p class="prompt">In analysis.py, change the title it prints to "TEST".</p>
+      </div>
+      <p>Click <b>Keep</b>. In <b>Source Control</b>, hover over <code>analysis.py</code>, click <b>Discard Changes</b> (the curved arrow), and click <b>Discard File</b>. The file is back to its last commit. Remember, a discard can't be undone.</p>
+    </li>
+    <li><span><b>Undo your last commit, before you sync.</b></span>
+      <div class="box copilot">
+        <p class="lbl"><span class="spark"></span> Ask Copilot <span class="where">Chat view, Agent</span></p>
+        <p class="prompt">In README.md, add the line "This is a test."</p>
+      </div>
+      <p>Click <b>Keep</b>. Stage <code>README.md</code>, type <i>test</i> in the message box, and click <b>Commit</b>. Now click <b>··· ▸ Commit ▸ Undo Last Commit</b>. The commit is gone: your change is back under <b>Staged Changes</b>, and <i>test</i> is back in the message box. To throw it all away, delete <i>test</i> from the message box, click <b>−</b> to unstage <code>README.md</code>, then click <b>Discard Changes</b> and <b>Discard File</b>.</p>
+    </li>
+    <li><span><b>Undo a commit that is already on GitHub: revert.</b> First, make a mistake on purpose, and sync it:</span>
+      <div class="box copilot">
+        <p class="lbl"><span class="spark"></span> Ask Copilot <span class="where">Chat view, Agent</span></p>
+        <p class="prompt">In data/sales.csv, change the price in the first Latte row to 52.50.</p>
+      </div>
+      <p>Click <b>Keep</b>, commit with the message <i>Update sales data</i>, and click <b>Sync Changes</b>. The mistake is on GitHub now. Undo it without erasing the history:</p>
+      <div class="box copilot">
+        <p class="lbl"><span class="spark"></span> Ask Copilot <span class="where">Chat view, Agent</span></p>
+        <p class="prompt">Revert my last commit, which is already on GitHub, without rewriting history. Keep the default message.</p>
+        <p><b>Check:</b> the command Copilot wants to run has the word <b>revert</b>, and <code>--no-edit</code> (that keeps Git's own message, so no text editor opens). It must <b>not</b> have <code>--force</code> or <code>reset --hard</code>: if it does, click <b>Skip</b> and ask your instructor. No <code>--no-edit</code>? Click <b>Skip</b> and send the prompt again. When the command looks right, click <b>Allow</b>, then click <b>Sync Changes</b>.</p>
+      </div>
+    </li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>A new commit, <i>Revert "Update sales data"</i>, in the Graph, and the old price back in <code>data/sales.csv</code>. A revert adds a <b>new</b> commit that does the opposite of the old one. Nothing is erased from the history, so everyone who has a copy of the project can still pull it with no problems.</p></div>
+  <div class="box warn"><p class="lbl">Never</p><p>Never force push, and never delete the hidden <code>.git</code> folder in your project: it holds the whole history.</p></div>
+</section>
+
+<!-- ============================== PART 6 ============================== -->
+<section class="part" id="part6" data-part="6">
+  <p class="eyebrow">Part 6</p>
+  <h2>Run someone else's project</h2>
+  <p>GitHub is full of data projects you can learn from: your classmates', your instructor's, and strangers'. In steps 18 to 20 you get one onto your laptop and run it: <b>Ponderosa Bikes</b>, a small analysis of made-up daily bike rentals. Its question: <i>how much do weekends, rain and heat change rentals?</i></p>
+</section>
+
+<section class="unit" id="find-project" data-n="18" data-part="6" data-do>
+  <h3>Find the project, and copy its address</h3>
+  <p class="why"><b>Why:</b> before you run a project, read what it does and how to run it. Then copy its address, so VS Code can get it from GitHub.</p>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span data-repo-line>Open the project on GitHub: <a data-repo-link href="#find-project"><span data-repo-text>github.com/…/bike-rentals</span></a></span></li>
+    <li><span><b>Read the README first.</b> GitHub shows it below the list of files. It says what the project does, and how to run it. Open <code>rentals.ipynb</code> too: you can read the whole analysis, with its results, right on GitHub.</span></li>
+    <li><span>Go back to the project's front page, and click the green <b>Code</b> button.</span>
+      <figure><img src="figures/gh_code_button.png" width="401" height="120" alt="GitHub repository page: the green Code button, outlined" loading="lazy"></figure>
+    </li>
+    <li><span>On the <b>Local</b> tab, under <b>HTTPS</b>, click the <b>copy</b> icon next to the address.</span>
+      <figure><img src="figures/gh_clone_url.png" width="463" height="347" alt="The Code menu on the Local tab: HTTPS address with the copy icon outlined, plus Open with GitHub Desktop and Download ZIP" loading="lazy"><figcaption>This picture shows another project. Yours ends in bike-rentals.git.</figcaption></figure>
+      <p class="credit">GitHub screenshots: GitHub Docs, CC BY 4.0.</p>
+    </li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>The address is copied. It ends in <code>bike-rentals.git</code>.</p></div>
+  <div class="box tip"><p class="lbl">Good to know</p><p><b>Download ZIP</b>, in the same menu, gives you only the files: no history, and no link to GitHub. It's fine for a quick look at a project. To work with a project, you clone it.</p></div>
+</section>
+
+<section class="unit" id="clone" data-n="19" data-part="6" data-do>
+  <h3>Clone it to your laptop</h3>
+  <p class="why"><b>Why:</b> <b>cloning</b> copies a repository from GitHub to your computer, with its whole history, and links the copy to GitHub. It's how you get any project from GitHub, including your own projects onto a second computer.</p>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>Open the <b>Command Palette</b>: <kbd class="win">Ctrl+Shift+P</kbd><kbd class="mac">⇧⌘P</kbd>. Type <code>Git: Clone</code>, and press <kbd>Enter</kbd>. (Pick <b>Git: Clone</b>, not Git: Clone (Recursive).)</span>
+      <div class="qp" role="img" aria-label="The Command Palette with Git: Clone typed in. Git: Clone is selected, and Git: Clone (Recursive) is below it">
+        <div class="qp-in">&gt;Git: Clone</div>
+        <div class="qp-row sel"><span>Git: Clone</span></div>
+        <div class="qp-row"><span>Git: Clone (Recursive)</span></div>
+      </div>
+    </li>
+    <li><span><b>Paste the address</b> into the box at the top of VS Code (<kbd class="win">Ctrl+V</kbd><kbd class="mac">⌘V</kbd>), and press <kbd>Enter</kbd>.</span>
+      <figure><img src="figures/f_clone_url.png" width="602" height="90" alt="Box at the top of VS Code with the pasted address and Clone from URL highlighted" loading="lazy"><figcaption>This picture shows another address. Yours ends in bike-rentals.git.</figcaption></figure>
+    </li>
+    <li><span>VS Code asks where to put the project. Click <b>Documents</b> in the <span class="win">left pane</span><span class="mac">sidebar on the left</span>, click <code>BAN501</code> once, and click <b>Select as Repository Destination</b>. VS Code makes a <code>bike-rentals</code> folder inside <code>BAN501</code>.</span></li>
+    <li><span>VS Code asks whether to open the repository. Click <b>Open</b> (not <b>Add to Workspace</b>). Your Pinecone project closes. You can open it again any time with <b>File ▸ Open Recent</b>.</span>
+      <figure><img src="figures/f_clone_open.png" width="452" height="102" alt="Dialog: Would you like to open the repository? Open highlighted" loading="lazy"><figcaption>Yours may also offer Add to Workspace. Click Open.</figcaption></figure>
+    </li>
+    <li><span>Trust the folder, as in <a href="#open-folder">step 2</a>: in the Restricted Mode bar, click <b>Manage</b>, then <b>Trust</b>. It's your instructor's project.</span></li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p><b>BIKE-RENTALS</b> at the top of the Explorer, with a <code>data</code> folder, <code>.gitignore</code>, <code>README.md</code>, <code>rentals.ipynb</code> and <code>requirements.txt</code>.</p></div>
+  <p class="small">When no folder is open, Source Control also shows a <b>Clone Repository</b> button. It does the same as <b>Git: Clone</b>.</p>
+  <div class="box tip"><p class="lbl">Trust: yes or no?</p><p>Trust your own projects, your instructor's, and your teammates'. Code can do anything you can do on your computer, so don't trust a stranger's project until you've read its code. Until you trust a folder, VS Code keeps it in <b>Restricted Mode</b>: you can read the code, but nothing runs by itself, and Copilot's Agent mode is off.</p></div>
+</section>
+
+<section class="unit" id="run-clone" data-n="20" data-part="6" data-do>
+  <h3>Install what it needs, and run it</h3>
+  <p class="why"><b>Why:</b> every project you clone runs the same way: <b>read the README, install the packages in <code>requirements.txt</code>, then run it</b>.</p>
+  <p class="sub">Do this</p>
+  <ol class="do">
+    <li><span>Install the packages the project needs:</span>
+      <div class="box copilot">
+        <p class="lbl"><span class="spark"></span> Ask Copilot <span class="where">Chat view, Agent</span></p>
+        <p class="prompt">Install the packages listed in requirements.txt</p>
+        <p><b>Check:</b> Copilot asks before it installs anything. Check that it's installing the packages from <code>requirements.txt</code>, then click <b>Allow</b>.</p>
+      </div>
+      <figure><img src="figures/f_pip.png" width="1081" height="412" alt="Terminal: pip install -r requirements.txt, then lines saying Requirement already satisfied for pandas, matplotlib and their dependencies" loading="lazy"><figcaption>When Copilot installs in the terminal, you see lines like these. (This picture comes from the Pinecone folder. Yours shows bike-rentals, and also lists ipykernel.)</figcaption></figure>
+      <p><i>Requirement already satisfied</i> means the package is installed already. That's fine: you used them for Pinecone Coffee in steps 3 and 13.</p>
+    </li>
+    <li><span>Open <code>rentals.ipynb</code>. Click <b>Select Kernel</b> at the top right, choose <b>Python Environments</b>, and pick the Python you use in class.</span></li>
+    <li><span>Click <b>Run All</b>.</span></li>
+  </ol>
+  <div class="box check"><p class="lbl">You should see</p><p>The same results as on GitHub, with no errors: weekends average about 59 rentals a day and weekdays about 34, rain cuts rentals roughly in half, and a bar chart of rentals by temperature.</p></div>
+  <div class="box tip"><p class="lbl">Good to know</p>
+    <ul>
+      <li>You can change your copy and run it as much as you like. But you can't send your changes to GitHub: the repository belongs to someone else, and only its owner, and people they invite, can push to it. If you try, VS Code offers to <i>create a fork</i> (your own copy on GitHub). Click <b>No</b>: forks aren't part of this guide.</li>
+      <li>When you close this folder, VS Code may ask whether to save <code>rentals.ipynb</code>. Click <b>Don't Save</b>.</li>
+    </ul>
+  </div>
+  <div class="box tip"><p class="lbl">If something goes wrong</p>
+    <ul>
+      <li><code>ModuleNotFoundError</code> in the notebook, even after you installed the packages? The notebook uses a different Python. Click <b>Select Kernel</b> and pick the Python that Copilot installed the packages for.</li>
+      <li>For any error in the terminal, you can also click the <b>sparkle</b> next to the failed command and choose <b>Fix with Copilot</b>.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================== WRAP-UP ============================== -->
+<section class="part" id="wrap" data-part="w">
+  <p class="eyebrow">Wrap-up</p>
+  <h2>Keep this handy</h2>
+  <p>Good habits, what to do when something goes wrong, a cheat sheet to keep, and a practice with your own project.</p>
+</section>
+
+<section class="unit" id="habits" data-n="21" data-part="w">
+  <h3>Good habits for this class</h3>
+  <div class="tbl"><table class="plain">
+    <thead><tr><th>Do</th><th>Don't</th></tr></thead>
+    <tbody>
+      <tr><td>Keep graded work in <b>private</b> repositories</td><td>Put graded work in a <b>public</b> repository: that is sharing answers</td></tr>
+      <tr><td>Make the <code>.gitignore</code> <b>before</b> your first upload</td><td>Upload passwords, keys, or customer data</td></tr>
+      <tr><td>Commit small and often, with clear messages</td><td>Upload big raw data files</td></tr>
+      <tr><td><b>Pull</b> before you start. <b>Sync</b> when you stop</td><td>Click <b>Allow</b> before you've read the command</td></tr>
+      <tr><td>Add a <b>README</b> and a <b>requirements.txt</b> to every project</td><td>Force push, or delete the hidden <code>.git</code> folder</td></tr>
+      <tr><td>Use paths that start from the project folder, like <code>data/sales.csv</code></td><td>Use paths like <code class="win">C:\Users\you\Desktop\sales.csv</code><code class="mac">/Users/you/Desktop/sales.csv</code>: they only work on your computer</td></tr>
+    </tbody>
+  </table></div>
+  <div class="box warn"><p class="lbl">Leaked a password or key?</p><p>Git remembers every version, so deleting the file later doesn't remove it from GitHub. Change the password or key right away, then tell your instructor.</p></div>
+  <p><b>File sizes:</b> GitHub refuses any file over 100 MiB. Keep each repository small, and share big data with a link or a small sample.</p>
+  <div class="sizes">
+    <div class="sz-track" aria-hidden="true"><i style="left:25%"></i><i style="left:50%"></i><i style="left:100%"></i></div>
+    <ul>
+      <li><b>25 MiB:</b> the biggest file you can add on the GitHub website</li>
+      <li><b>50 MiB:</b> you get a warning when you push</li>
+      <li><b>100 MiB:</b> GitHub refuses the push</li>
+    </ul>
+  </div>
+</section>
+
+<section class="unit" id="errors" data-n="22" data-part="w">
+  <h3>When something goes wrong</h3>
+  <p>Find your message in the first column, then do what the last column says.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>You see…</th><th>It means…</th><th>Do this</th></tr></thead>
+    <tbody>
+      <tr><td>A <b>Restricted Mode</b> bar, or Copilot's Agent mode and the terminal won't work</td><td>VS Code doesn't trust this folder yet</td><td>Click <b>Manage</b> in the bar (or <b>Restricted Mode</b> at the left end of the status bar), then <b>Trust</b> (<a href="#open-folder">step 2</a>)</td></tr>
+      <tr><td>A <b>Download Git</b> button in Source Control</td><td>Git isn't installed yet</td><td>Install Git, then close and reopen VS Code (<a href="#git-setup">step 5</a>)</td></tr>
+      <tr><td><i>Make sure you configure your "user.name" and "user.email"</i></td><td>Git doesn't know who you are</td><td>Tell Git your name and email (<a href="#git-setup">step 5</a>, part B)</td></tr>
+      <tr><td>Sync fails: <i>divergent branches</i></td><td>Your laptop and GitHub both have new commits</td><td>Ask Copilot: <i>Make git pull merge instead of rebase</i>. Then Sync again</td></tr>
+      <tr><td><i>Can't push refs to remote. Try running "Pull" first…</i></td><td>GitHub has commits you don't have</td><td>Click <b>Sync Changes</b>: it pulls first, then pushes</td></tr>
+      <tr><td><i>You don't have permissions to push to … Would you like to create a fork…?</i></td><td>The repository belongs to someone else</td><td>Click <b>No</b>, and keep your changes on your laptop (<a href="#run-clone">step 20</a>)</td></tr>
+      <tr><td><code>ModuleNotFoundError</code></td><td>This Python doesn't have the package</td><td>Install from <code>requirements.txt</code> (<a href="#run-clone">step 20</a>). In a notebook, pick the same Python in <b>Select Kernel</b></td></tr>
+      <tr><td><code>FileNotFoundError</code></td><td>Python looked in the wrong folder</td><td>Open the project folder itself (<a href="#open-folder">step 2</a>)</td></tr>
+      <tr><td>Copilot stops answering and mentions a limit</td><td>You've used this month's Copilot allowance</td><td>Tell your instructor</td></tr>
+    </tbody>
+  </table></div>
+  <div class="box copilot">
+    <p class="lbl"><span class="spark"></span> Still stuck? Ask Copilot</p>
+    <ul>
+      <li>For an error in the <b>terminal</b>: click the <b>sparkle</b> next to the failed command, and choose <b>Fix with Copilot</b>.</li>
+      <li>For a <b>Git</b> error: in Source Control, click <b>··· ▸ Show Git Output</b>, and copy the error message. Then ask in Chat, and paste the message after your question:</li>
+    </ul>
+    <p class="prompt">What does this Git error mean, and how do I fix it with the buttons in VS Code?</p>
+    <p>When you ask a person for help, include the error message too.</p>
+  </div>
+</section>
+
+<section class="unit" id="cheat-sheet" data-n="23" data-part="w">
+  <h3>Cheat sheet: I want to… → click this</h3>
+  <p>Keep this table open while you work.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>I want to…</th><th>Click this</th><th>Where, or when</th></tr></thead>
+    <tbody>
+      <tr><td>Let Copilot and the terminal work in a folder</td><td><b>Manage ▸ Trust</b></td><td>The Restricted Mode bar, only for your own or known projects</td></tr>
+      <tr><td>Keep a file off GitHub</td><td>List it in the <b>.gitignore</b></td><td>Before you publish</td></tr>
+      <tr><td>Put a project folder on GitHub</td><td><b>Publish to GitHub</b></td><td>Source Control, after the <code>.gitignore</code></td></tr>
+      <tr><td>Make my repository public, or private again</td><td><b>Settings ▸ Change visibility</b></td><td>On github.com (<a href="#publish">step 8</a>)</td></tr>
+      <tr><td>Save a version</td><td><b>+</b> (stage), message, <b>Commit</b></td><td>Source Control</td></tr>
+      <tr><td>Write the commit message</td><td>The <b>sparkle</b> in the message box</td><td>Then read and fix it</td></tr>
+      <tr><td>Send my commits to GitHub</td><td><b>··· ▸ Push</b>, or <b>Sync Changes</b></td><td>Sync Changes pulls first, then pushes</td></tr>
+      <tr><td>Get the newest version</td><td><b>··· ▸ Pull</b>, or <b>Sync Changes</b></td><td>Before you start working</td></tr>
+      <tr><td>See an old version</td><td><b>Graph</b>, or <b>Explorer ▸ Timeline</b></td><td>Click a commit</td></tr>
+      <tr><td>Undo</td><td><b>Discard</b>, <b>Undo Last Commit</b>, or a revert</td><td><a href="#undo">Step 17</a></td></tr>
+      <tr><td>Get a project from GitHub</td><td>Command Palette ▸ <b>Git: Clone</b></td><td>Paste the address from GitHub's <b>Code</b> button</td></tr>
+      <tr><td>Run a project I cloned</td><td>Read the README, install, then <b>▷</b> or <b>Run All</b></td><td>Ask Copilot to install from <code>requirements.txt</code></td></tr>
+      <tr><td>Change a file, or run a command</td><td>Ask Copilot in <b>Chat</b>, in <b>Agent</b> mode</td><td>Read it, then <b>Keep</b> or <b>Allow</b></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="unit" id="practice" data-n="24" data-part="w" data-do>
+  <h3>Practice: put your own project on GitHub (15 minutes)</h3>
+  <p>Now do Parts 3 and 4 again, with a folder of your own.</p>
+  <ol class="do">
+    <li><span>Pick the folder of an earlier in-class project. Don't pick <code>BAN501</code>, <code>pinecone-sales</code> or <code>bike-rentals</code>. Did that project run in Google Colab? In Colab, click <b>File ▸ Download ▸ Download .ipynb</b>, and put the notebook and its data in a new folder in <code>BAN501</code>. Open the folder in VS Code (<b>File ▸ Open Folder…</b>), and trust it.</span></li>
+    <li><span>Look for private or very large files in it. Ask Copilot for a <code>.gitignore</code> that lists them, plus <code>__pycache__/</code>, <code>.ipynb_checkpoints/</code> and <code>.venv/</code>.</span></li>
+    <li><span><b>Publish</b> it to GitHub as a <b>private</b> repository. On GitHub, check that no private file is there.</span></li>
+    <li><span>Ask Copilot for a README (what the project does, and how to run it) and a <code>requirements.txt</code>. Commit and <b>Sync</b>.</span></li>
+    <li><span>Make one more change, let the <b>sparkle</b> write the message, commit, and <b>Sync</b>.</span></li>
+  </ol>
+  <div class="box check"><p class="lbl">You are done when</p>
+    <ul class="donelist">
+      <li>your repository on GitHub shows at least <b>three commits</b>,</li>
+      <li>no private file is on GitHub,</li>
+      <li>its README says how to run the project.</li>
+    </ul>
+  </div>
+  <p><b>Stuck?</b> Check <a href="#errors">step 22</a>, ask Copilot, then ask a neighbor.</p>
+</section>
+
+<section class="unit" id="sources" data-n="25" data-part="w">
+  <h3>Sources and further reading</h3>
+  <div class="sources">
+    <div>
+      <h4>VS Code</h4>
+      <ul>
+        <li><a href="https://code.visualstudio.com/docs/sourcecontrol/quickstart">Source control quickstart</a></li>
+        <li><a href="https://code.visualstudio.com/docs/sourcecontrol/repos-remotes">Repositories and remotes: clone, publish, pull, sync</a></li>
+        <li><a href="https://code.visualstudio.com/docs/sourcecontrol/staging-commits">Staging, commits and undo</a></li>
+        <li><a href="https://code.visualstudio.com/docs/sourcecontrol/history">History: Graph and Timeline</a></li>
+        <li><a href="https://code.visualstudio.com/docs/sourcecontrol/troubleshooting">Troubleshoot source control</a></li>
+        <li><a href="https://code.visualstudio.com/docs/editing/workspaces/workspace-trust">Workspace Trust and Restricted Mode</a></li>
+        <li><a href="https://code.visualstudio.com/docs/agents/run/chat-view">The Chat view</a></li>
+        <li><a href="https://code.visualstudio.com/docs/agents/run/approvals">Approvals and permissions for agents</a></li>
+        <li><a href="https://code.visualstudio.com/docs/editing/copilot-smart-actions">AI smart actions: commit messages and terminal fixes</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Git and GitHub</h4>
+      <ul>
+        <li><a href="https://git-scm.com/install">Install Git</a></li>
+        <li><a href="https://docs.github.com/en/get-started/git-basics/ignoring-files">Ignoring files (.gitignore)</a></li>
+        <li><a href="https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files">Editing files on GitHub</a></li>
+        <li><a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">Cloning a repository</a></li>
+        <li><a href="https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github">About large files on GitHub</a></li>
+        <li><a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/enable-copilot/set-up-for-students">Copilot for students</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="small"><b>Credits.</b> VS Code screenshots were made for this class. GitHub website screenshots: GitHub Docs (docs.github.com), licensed CC BY 4.0. The Pinecone Coffee and Ponderosa Bikes data are made up. The steps follow the VS Code and GitHub documentation as of November 2026; button names can change between versions.</p>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <span>BAN 501 Python for Business Analytics · Northern Arizona University · Fall 2026</span>
+  <span>Updated November 2026. Something on this page doesn't match your screen? Tell your instructor which step.</span>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var KEY = 'ban501-github-guide-v4';
+  var state = (function(){ try { var v = localStorage.getItem(KEY); return v ? JSON.parse(v) : {}; } catch (e) { return {}; } })() || {};
+  state.done = state.done || {};
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function $(s, r){ return (r || document).querySelector(s); }
+  function $$(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  var body = document.body;
+
+  /* number badge and Done tick for each step */
+  var units = $$('main > .unit[data-n]');
+  var doUnits = units.filter(function(u){ return u.hasAttribute('data-do'); });
+  units.forEach(function(u){
+    var h = $('h3', u); if (!h) return;
+    var head = document.createElement('div'); head.className = 'unit-head';
+    var no = document.createElement('span'); no.className = 'no'; no.textContent = u.dataset.n;
+    no.setAttribute('aria-hidden', 'true');
+    h.parentNode.insertBefore(head, h); head.appendChild(no); head.appendChild(h);
+    var sr = document.createElement('span'); sr.className = 'sr'; sr.textContent = 'Step ' + u.dataset.n + ': ';
+    h.insertBefore(sr, h.firstChild);
+    if (u.hasAttribute('data-do')) {
+      var lab = document.createElement('label'); lab.className = 'done';
+      var cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'done-' + u.id; cb.checked = !!state.done[u.id];
+      cb.addEventListener('change', function(){ state.done[u.id] = cb.checked; save(); progress(); });
+      lab.appendChild(cb); lab.appendChild(document.createTextNode('Done')); head.appendChild(lab);
+    }
+  });
+
+  /* contents, with the Windows/Mac switch on top */
+  function osSwitch(){
+    var w = document.createElement('div'); w.className = 'rail-os';
+    w.innerHTML = '<span class="os-q">My computer</span><div class="seg" role="group" aria-label="My computer">' +
+      '<button type="button" data-os="win" aria-pressed="false">Windows</button>' +
+      '<button type="button" data-os="mac" aria-pressed="false">Mac</button></div>';
+    return w;
+  }
+  function buildToc(nav, withReset){
+    nav.innerHTML = '';
+    nav.appendChild(osSwitch());
+    var list = null;
+    function group(part, label){
+      var p = document.createElement('p'); p.className = 'tp'; p.setAttribute('data-part', part); p.textContent = label;
+      list = document.createElement('ol'); nav.appendChild(p); nav.appendChild(list);
+    }
+    group('0', 'Start here');
+    $$('main > .part, main > .unit').forEach(function(el){
+      if (el.classList.contains('part')) {
+        var eb = $('.eyebrow', el).textContent;
+        group(el.dataset.part, /^Part/.test(eb) ? eb + ' · ' + $('h2', el).textContent : eb);
+        return;
+      }
+      var a = document.createElement('a'); a.href = '#' + el.id; a.setAttribute('data-id', el.id); a.setAttribute('data-part', el.dataset.part);
+      var n = document.createElement('span'); n.className = 'tn'; n.textContent = el.dataset.n || '·';
+      var t = document.createElement('span'); var h = $('h3', el);
+      t.textContent = h ? h.textContent.replace(/^Step \d+: /, '') : '';
+      var k = document.createElement('span'); k.className = 'tick'; k.setAttribute('aria-hidden', 'true');
+      a.appendChild(n); a.appendChild(t); a.appendChild(k);
+      var li = document.createElement('li'); li.appendChild(a); list.appendChild(li);
+    });
+    if (withReset) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'reset'; b.textContent = 'Clear my ticks';
+      b.addEventListener('click', function(){
+        if (b.dataset.armed) { state.done = {}; save(); $$('.done input').forEach(function(c){ c.checked = false; }); progress(); b.textContent = 'Clear my ticks'; delete b.dataset.armed; }
+        else { b.dataset.armed = '1'; b.textContent = 'Click again to clear'; setTimeout(function(){ b.textContent = 'Clear my ticks'; delete b.dataset.armed; }, 4000); }
+      });
+      nav.appendChild(b);
+    }
+  }
+  buildToc(document.getElementById('toc'), true);
+  buildToc($('.toc-mobile .toc'), false);
+
+  /* Windows or Mac */
+  function setOS(v){
+    v = v === 'mac' ? 'mac' : 'win';
+    body.classList.toggle('os-mac', v === 'mac');
+    body.classList.toggle('os-win', v !== 'mac');
+    $$('[data-os]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.os === v ? 'true' : 'false'); });
+    state.os = v; save();
+  }
+  var guess = (/Mac|iPhone|iPad/.test(navigator.platform || '') || /Mac OS X/.test(navigator.userAgent || '')) ? 'mac' : 'win';
+  document.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('[data-os]');
+    if (b) setOS(b.dataset.os);
+  });
+  setOS(state.os || guess);
+
+  function progress(){
+    var n = doUnits.filter(function(u){ return state.done[u.id]; }).length;
+    var bar = document.getElementById('bar'); if (bar) bar.style.width = (100 * n / doUnits.length) + '%';
+    var t = document.getElementById('progress-text'); if (t) t.textContent = n + ' of ' + doUnits.length + ' hands-on steps done';
+    $$('.toc a').forEach(function(a){ a.querySelector('.tick').textContent = state.done[a.getAttribute('data-id')] ? '✓' : ''; });
+  }
+  progress();
+
+  /* your name and email fill the step 5 prompt */
+  function fill(key, input, fallback){
+    if (!input) return;
+    input.addEventListener('input', function(){
+      var v = input.value.trim();
+      $$('[data-fill="' + key + '"]').forEach(function(s){ s.textContent = v || fallback; });
+    });
+  }
+  fill('name', document.getElementById('f-name'), 'Your Name');
+  fill('email', document.getElementById('f-email'), 'you@example.com');
+
+  /* the example project's address (Part 6). Set it with data-example-repo on <body>; or publish this page with
+     GitHub Pages and it is built from the page's own address: https://USER.github.io/... -> github.com/USER/bike-rentals */
+  var repo = (body.getAttribute('data-example-repo') || '').trim();
+  if (!repo) {
+    var gh = /^([a-z0-9-]+)\.github\.io$/i.exec(location.hostname || '');
+    if (gh) repo = 'https://github.com/' + gh[1] + '/bike-rentals';
+  }
+  if (repo) {
+    $$('[data-repo-link]').forEach(function(a){ a.href = repo; a.target = '_blank'; a.rel = 'noopener'; });
+    $$('[data-repo-text]').forEach(function(s){ s.textContent = repo.replace(/^https?:\/\//, ''); });
+  } else {
+    $$('[data-repo-line]').forEach(function(s){ s.textContent = 'Open the project on GitHub. Your instructor gives you its link.'; });
+  }
+
+  /* copy buttons for prompts */
+  $$('.prompt').forEach(function(el){
+    var wrap = document.createElement('div'); wrap.className = 'cw';
+    el.parentNode.insertBefore(wrap, el); wrap.appendChild(el);
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'copy'; b.textContent = 'Copy';
+    b.setAttribute('aria-label', 'Copy the prompt');
+    b.addEventListener('click', function(){
+      var text = el.textContent.replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
+      function ok(){ b.textContent = 'Copied'; setTimeout(function(){ b.textContent = 'Copy'; }, 1600); }
+      function fallback(){
+        var r = document.createRange(); r.selectNodeContents(el);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        b.textContent = body.classList.contains('os-mac') ? 'Press ⌘C' : 'Press Ctrl+C';
+        setTimeout(function(){ b.textContent = 'Copy'; }, 2400);
+      }
+      try { navigator.clipboard.writeText(text).then(ok, fallback); } catch (e) { fallback(); }
+    });
+    wrap.appendChild(b);
+  });
+
+  /* highlight where you are in the contents */
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (!en.isIntersecting) return;
+        $$('.toc a.here').forEach(function(a){ a.classList.remove('here'); });
+        $$('.toc a[data-id="' + en.target.id + '"]').forEach(function(a){ a.classList.add('here'); });
+      });
+    }, { rootMargin: '-15% 0px -75% 0px' });
+    $$('main > .unit').forEach(function(u){ io.observe(u); });
+  }
+
+  /* close the mobile contents after a tap */
+  $$('.toc-mobile .toc').forEach(function(nav){
+    nav.addEventListener('click', function(e){ if (e.target.closest('a')) { var d = nav.closest('details'); if (d) d.open = false; } });
+  });
+})();
+</script>
+</body>
+</html>
